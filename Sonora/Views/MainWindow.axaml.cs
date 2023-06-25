@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Sonora;
+namespace Sonora.Views;
 
 public partial class MainWindow : Window
 {
