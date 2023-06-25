@@ -1,10 +1,13 @@
-<Window xmlns="https://github.com/avaloniaui"
+<rxui:ReactiveWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:rxui="http://reactiveui.net"
         xmlns:vm="using:Sonora.ViewModels"
+        xmlns:local="using:Sonora.Views"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
         x:Class="Sonora.Views.MainWindow"
+        x:TypeArguments="vm:MainWindowViewModel"
         x:DataType="vm:MainWindowViewModel"
         Title="Sonora">
   <Design.DataContext>
@@ -12,6 +15,6 @@
   </Design.DataContext>
 
   <Panel>
-    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Greeting}"/>
+    <local:FilesView HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding Files}"/>
   </Panel>
-</Window>
+</rxui:ReactiveWindow>

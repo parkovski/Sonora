@@ -21,4 +21,8 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.21" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\FilesView.axaml" />
+  </ItemGroup>
 </Project>
