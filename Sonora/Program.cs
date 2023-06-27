@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
-using System;
 using System.Runtime.InteropServices;
 
 namespace Sonora;
@@ -26,6 +25,7 @@ public class Program
     {
         public int argc;
         public IntPtr argv;
+        public HostInterface host;
     }
 
     public static int HostedMain(IntPtr arg, int size)
@@ -53,6 +53,8 @@ public class Program
                 args[i] = Marshal.PtrToStringUTF8(argvp[i])!;
             }
         }
+
+        hostedArgs.host.Hello();
 
         Main(args);
         return 0;

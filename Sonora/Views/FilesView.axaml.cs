@@ -18,9 +18,9 @@ public partial class FilesView : ReactiveUserControl<FilesViewModel>
 
     private async Task ShowOpenFolderDialog(InteractionContext<Unit, string?> interaction)
     {
-        var dialog = new OpenFolderDialog();
         if (App.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
         {
+            var dialog = new OpenFolderDialog();
             var folder = await dialog.ShowAsync(lifetime.MainWindow);
             interaction.SetOutput(folder);
         }

@@ -10,6 +10,8 @@
 #include <assert.h>
 #include <iostream>
 
+#include "host.h"
+
 // Provided by the AppHost NuGet package and installed as an SDK pack
 #include "nethost.h"
 
@@ -116,9 +118,11 @@ int main(int argc, char *argv[])
     {
         int argc;
         const char_t *const *argv;
+        HostInterface host;
     };
     // <SnippetCallManaged>
     HostedMainArgs args { argc, argv };
+    args.host.Hello = []{std::cout << "Hello from C++\n";};
 
     hosted_main(&args, sizeof(args));
     // </SnippetCallManaged>
