@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Threading;
-using ReactiveUI;
 
 namespace Sonora.ViewModels;
 
@@ -20,10 +13,20 @@ public class FilesViewModel : ViewModelBase
     public string Directory
     {
         get => _directory;
-        set => this.RaiseAndSetIfChanged(ref _directory, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _directory, value);
+            RefreshFiles();
+        }
     }
 
-    public List<string> Files { get; }
+    private List<string> _files;
+
+    public List<string> Files
+    {
+        get => _files;
+        set => this.RaiseAndSetIfChanged(ref _files, value);
+    }
 
     public ICommand ChooseDirectoryCommand { get; }
 
@@ -31,8 +34,8 @@ public class FilesViewModel : ViewModelBase
 
     public FilesViewModel()
     {
-        _directory = System.Environment.CurrentDirectory;
-        Files = new List<string> { "test.wav", "foo.wav" };
+        _directory = Environment.CurrentDirectory;
+        RefreshFiles();
         ChooseDirectoryCommand = ReactiveCommand.CreateFromTask(ChooseDirectoryAsync);
         ShowOpenFolderDialog = new();
     }
@@ -44,5 +47,19 @@ public class FilesViewModel : ViewModelBase
         {
             Directory = directory;
         }
+    }
+
+    private void RefreshFiles()
+    {
+        var collection = new List<string>();
+        var dirInfo = new System.IO.DirectoryInfo(Directory);
+        foreach (var file in dirInfo.EnumerateFiles())
+        {
+            if (file.Name.EndsWith(".wav"))
+            {
+                collection.Add(file.Name);
+            }
+        }
+        Files = collection;
     }
 }
