@@ -7,5 +7,17 @@ public struct HostInterface
 {
     public delegate void FnHello();
 
+    public delegate IntPtr FnWaveNewFromFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
+    public delegate void FnWaveFree(IntPtr wave);
+    public delegate ulong FnWaveGetFrames(IntPtr wave);
+    public delegate uint FnWaveGetChannels(IntPtr wave);
+    public delegate ulong FnWaveReadFrames(IntPtr wave, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] float[] data, ulong size);
+
     public FnHello Hello;
+
+    public FnWaveNewFromFile WaveNewFromFile;
+    public FnWaveFree WaveFree;
+    public FnWaveGetFrames WaveGetFrames;
+    public FnWaveGetChannels WaveGetChannels;
+    public FnWaveReadFrames WaveReadFrames;
 }

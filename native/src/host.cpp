@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <iostream>
 
-#include "host.h"
+#include "hostinterface.h"
 
 // Provided by the AppHost NuGet package and installed as an SDK pack
 #include "nethost.h"
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     {
         int argc;
         const char_t *const *argv;
-        HostInterface host;
+        sonora::host::HostInterface host;
     };
     // <SnippetCallManaged>
     HostedMainArgs args { argc, argv };

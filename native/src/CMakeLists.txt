@@ -1,5 +1,8 @@
 set(SOURCES
   host.cpp
+  hostinterface.cpp
+  host-wave.c
+  miniaudio.c
 )
 
 add_executable(sonora ${SOURCES})
