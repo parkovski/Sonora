@@ -36,6 +36,8 @@ public class Program
         }
 
         var hostedArgs = Marshal.PtrToStructure<HostedMainArgs>(arg);
+
+        // Copy args from C++ to C# string[].
         var argvp = new IntPtr[hostedArgs.argc];
         Marshal.Copy(hostedArgs.argv, argvp, 0, hostedArgs.argc);
         var args = new string[hostedArgs.argc];
@@ -54,7 +56,8 @@ public class Program
             }
         }
 
-        hostedArgs.host.Hello();
+        HostInterface._instance = hostedArgs.host;
+        HostInterface.Instance.Hello();
 
         Main(args);
         return 0;

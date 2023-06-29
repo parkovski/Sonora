@@ -5,6 +5,11 @@ namespace Sonora;
 [StructLayout(LayoutKind.Sequential)]
 public struct HostInterface
 {
+    internal static HostInterface _instance;
+    public static ref readonly HostInterface Instance { get => ref _instance; }
+
+    public readonly bool IsValid => Hello != null;
+
     public delegate void FnHello();
 
     public delegate IntPtr FnWaveNewFromFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);

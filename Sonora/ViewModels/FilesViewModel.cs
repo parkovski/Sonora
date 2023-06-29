@@ -32,7 +32,10 @@ public class FilesViewModel : ViewModelBase
 
     public Interaction<Unit, string?> ShowOpenFolderDialog { get; }
 
+    // Complains about not setting _files, but RefreshFiles sets it.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public FilesViewModel()
+#pragma warning restore CS8618
     {
         _directory = Environment.CurrentDirectory;
         RefreshFiles();

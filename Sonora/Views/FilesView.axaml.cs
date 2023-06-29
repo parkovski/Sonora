@@ -1,7 +1,8 @@
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 using Sonora.ViewModels;
+using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 
@@ -18,15 +19,14 @@ public partial class FilesView : ReactiveUserControl<FilesViewModel>
 
     private async Task ShowOpenFolderDialog(InteractionContext<Unit, string?> interaction)
     {
-        if (App.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+        var storageProvider = TopLevel.GetTopLevel(this)?.StorageProvider;
+        if (storageProvider == null || !storageProvider.CanPickFolder)
         {
-            var dialog = new OpenFolderDialog();
-            var folder = await dialog.ShowAsync(lifetime.MainWindow);
-            interaction.SetOutput(folder);
+            interaction.SetOutput(null);
+            return;
         }
-        else
-        {
-            throw new PlatformNotSupportedException("Open folder only implemented for desktop platforms");
-        }
+        var options = new FolderPickerOpenOptions { Title = "Choose a WAV folder" };
+        var folder = (await storageProvider.OpenFolderPickerAsync(options)).FirstOrDefault();
+        interaction.SetOutput(folder?.Path.LocalPath);
     }
 }
