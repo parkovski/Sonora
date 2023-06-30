@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:rxui="http://reactiveui.net"
+             xmlns:flex="using:Avalonia.Flexbox"
              xmlns:vm="using:Sonora.ViewModels"
              xmlns:views="using:Sonora.Views"
              xmlns:conv="using:Sonora.Converters"
@@ -24,14 +25,14 @@
     <ListBox ItemsSource="{Binding Files}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
-          <WrapPanel/>
+          <flex:FlexPanel/>
         </ItemsPanelTemplate>
       </ListBox.ItemsPanel>
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Vertical">
-            <views:WaveView Width="100" Height="100" Wave="{Binding, Converter={StaticResource WaveConverter}}" Mode="Samples"/>
-            <TextBlock Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
+            <views:WaveView Width="100" Height="100" Wave="{Binding, Converter={StaticResource WaveConverter}}"/>
+            <TextBlock TextWrapping="Wrap" Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
