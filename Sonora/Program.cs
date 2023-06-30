@@ -17,6 +17,11 @@ public class Program
         {
             HostInterfaceLoader.Load();
         }
+#else
+        if (!HostInterface.Instance.IsValid)
+        {
+            throw new NotSupportedException("HostInterface not present; must be loaded by the Sonora native host");
+        }
 #endif
 
         BuildAvaloniaApp()
