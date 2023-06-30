@@ -32,7 +32,7 @@
         <DataTemplate>
           <StackPanel Orientation="Vertical">
             <views:WaveView Width="100" Height="100" Wave="{Binding, Converter={StaticResource WaveConverter}}"/>
-            <TextBlock TextWrapping="Wrap" Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
+            <TextBlock Width="100" TextWrapping="Wrap" Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
