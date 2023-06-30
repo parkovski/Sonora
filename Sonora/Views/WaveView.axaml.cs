@@ -10,7 +10,8 @@ namespace Sonora.Views;
 
 public partial class WaveView : UserControl
 {
-    public static readonly StyledProperty<WaveModel> WaveProperty = AvaloniaProperty.Register<WaveView, WaveModel>(nameof(Wave));
+    public static readonly StyledProperty<WaveModel> WaveProperty =
+        AvaloniaProperty.Register<WaveView, WaveModel>(nameof(Wave));
 
     public WaveModel Wave
     {
@@ -25,12 +26,13 @@ public partial class WaveView : UserControl
         Average,
     }
 
-    public static readonly StyledProperty<DrawMode> ModeProperty = AvaloniaProperty.Register<WaveView, DrawMode>(nameof(Mode), DrawMode.Auto);
+    public static readonly StyledProperty<DrawMode> DrawProperty =
+        AvaloniaProperty.Register<WaveView, DrawMode>(nameof(Draw), DrawMode.Auto);
 
-    public DrawMode Mode
+    public DrawMode Draw
     {
-        get => GetValue(ModeProperty);
-        set => SetValue(ModeProperty, value);
+        get => GetValue(DrawProperty);
+        set => SetValue(DrawProperty, value);
     }
 
     public WaveView()
@@ -41,44 +43,43 @@ public partial class WaveView : UserControl
     public override void Render(DrawingContext context)
     {
         const int margin = 2;
-        double mul = Height / 2 - margin;
-        double add = margin;
 
         var pen = new Pen(Brushes.White);
         context.DrawRectangle(pen, new Rect(0, 0, Width, Height));
         pen = new Pen(Brushes.Aqua);
 
+        double mid = Height * 0.5;
+        double mul = mid - margin;
         double stride = Wave.Frames / Width;
-        if (Mode == DrawMode.Average || (Mode == DrawMode.Auto && stride >= 2))
+        if (Draw == DrawMode.Average || (Draw == DrawMode.Auto && stride >= 10))
         {
             // Draw an average waveform.
-            double x0 = 0;
-            double y0 = 0;
-            for (double x1 = 0; x1 < Width; x1++)
+            for (double x = 0; x < Width; x++)
             {
                 double avg = 0;
-                ulong frame0 = (ulong)(x0 * stride);
-                ulong frame1 = (ulong)(x1 * stride);
+                ulong frame0 = (ulong)(x * stride);
+                ulong frame1 = (ulong)((x + 1) * stride);
                 for (ulong frame = frame0; frame < frame1; frame++)
                 {
-                    avg += Wave[frame * Wave.Channels];
+                    avg += Math.Abs(Wave[frame * Wave.Channels]);
                 }
                 avg /= (frame1 - frame0);
-                double y1 = (avg + 1) * mul + add;
-                context.DrawLine(pen, new Point(x0, y0), new Point(x1, y1));
-                x0 = x1;
-                y0 = y1;
+                double y0 = mid + avg * mul;
+                double y1 = mid - avg * mul;
+                context.DrawLine(pen, new Point(x, y0), new Point(x, y1));
             }
         }
         else
         {
             // Draw a line from previous sample to current sample.
             double x0 = 0;
-            double y0 = (Wave[0] + 1) * mul + add;
+            // Scale so that -1 = Height - 2*margin, 0 = Height/2, 1 = margin.
+            // [0..2] -> [margin..Height-2*margin]
+            double y0 = (1 - Wave[0]) * mul + margin;
             for (double x1 = 1; x1 < Width; x1++)
             {
                 ulong frame = (ulong)(x1 * stride);
-                double y1 = (Wave[frame * Wave.Channels] + 1) * mul + add;
+                double y1 = (1 - Wave[frame * Wave.Channels]) * mul + margin;
                 context.DrawLine(pen, new Point(x0, y0), new Point(x1, y1));
                 x0 = x1;
                 y0 = y1;
