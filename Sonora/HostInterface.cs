@@ -29,11 +29,17 @@ public struct HostInterface
 
 public static class HostInterfaceLoader
 {
+#if DEBUG
     [DllImport("../../../../native/build/bin/sonoradbg")]
     private static extern void GetHostInterface(ref HostInterface host);
+#endif
 
     public static void Load()
     {
+#if DEBUG
         GetHostInterface(ref HostInterface._instance);
+#else
+        throw new NotSupportedException("Release builds must be run from the native host");
+#endif
     }
 }
