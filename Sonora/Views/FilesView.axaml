@@ -4,17 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:rxui="http://reactiveui.net"
              xmlns:vm="using:Sonora.ViewModels"
+             xmlns:views="using:Sonora.Views"
+             xmlns:conv="using:Sonora.Converters"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
              x:Class="Sonora.Views.FilesView"
              x:TypeArguments="vm:FilesViewModel">
   <Design.DataContext>
     <vm:FilesViewModel/>
   </Design.DataContext>
-  <StackPanel Orientation="Vertical">
-    <Grid ColumnDefinitions="*,auto">
-      <TextBlock Grid.Column="0" Text="{Binding Directory}" VerticalAlignment="Center" Margin="4,0,4,0"/>
-      <Button Grid.Column="1" Content="..." Command="{Binding ChooseDirectoryCommand}"/>
-    </Grid>
+  <Control.Resources>
+    <conv:PathToFileNameConverter x:Key="FileNameConverter"/>
+    <conv:PathToWaveConverter x:Key="WaveConverter"/>
+  </Control.Resources>
+  <DockPanel>
+    <DockPanel DockPanel.Dock="Top">
+      <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,4,4,0" Content="..." Command="{Binding ChooseDirectoryCommand}"/>
+      <TextBlock Grid.Column="0" Text="{Binding Directory}" VerticalAlignment="Center" Margin="4,4,4,0"/>
+    </DockPanel>
     <ListBox ItemsSource="{Binding Files}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
@@ -23,9 +29,12 @@
       </ListBox.ItemsPanel>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <TextBlock Text="{Binding}"/>
+          <StackPanel Orientation="Vertical">
+            <views:WaveView Width="100" Height="100" Wave="{Binding, Converter={StaticResource WaveConverter}}" Mode="Samples"/>
+            <TextBlock Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
+          </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
     </ListBox>
-  </StackPanel>
+  </DockPanel>
 </rxui:ReactiveUserControl>

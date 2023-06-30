@@ -60,7 +60,7 @@ public class FilesViewModel : ViewModelBase
         {
             if (file.Name.EndsWith(".wav"))
             {
-                collection.Add(file.Name);
+                collection.Add(file.FullName);
             }
         }
         Files = collection;

@@ -14,7 +14,9 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
-  <Panel>
-    <local:FilesView HorizontalAlignment="Center" VerticalAlignment="Center" DataContext="{Binding Files}"/>
-  </Panel>
+  <Grid ColumnDefinitions="*,4,*">
+    <local:FilesView Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding Files}"/>
+    <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
+    <Rectangle Grid.Column="2" Fill="DarkBlue"/>
+  </Grid>
 </rxui:ReactiveWindow>
