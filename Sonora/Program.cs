@@ -12,10 +12,12 @@ public class Program
     [STAThread]
     public static void Main(string[] args)
     {
+#if DEBUG
         if (!HostInterface.Instance.IsValid)
         {
             HostInterfaceLoader.Load();
         }
+#endif
 
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);

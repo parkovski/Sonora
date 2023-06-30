@@ -12,11 +12,11 @@ public struct HostInterface
 
     public delegate bool FnIsHosted();
 
-    public delegate IntPtr FnWaveNewFromFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
-    public delegate void FnWaveFree(IntPtr wave);
-    public delegate ulong FnWaveGetFrames(IntPtr wave);
-    public delegate uint FnWaveGetChannels(IntPtr wave);
-    public delegate ulong FnWaveReadFrames(IntPtr wave, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] float[] data, ulong size);
+    public delegate nint FnWaveNewFromFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
+    public delegate void FnWaveFree(nint wave);
+    public delegate ulong FnWaveGetFrames(nint wave);
+    public delegate uint FnWaveGetChannels(nint wave);
+    public delegate ulong FnWaveReadFrames(nint wave, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] float[] data, ulong size);
 
     public FnIsHosted IsHosted;
 
