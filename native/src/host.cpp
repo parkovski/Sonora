@@ -9,6 +9,7 @@
 #include <string.h>
 #include <assert.h>
 #include <iostream>
+#include <new>
 
 #include "hostinterface.h"
 
@@ -114,15 +115,19 @@ int main(int argc, char *argv[])
     //
     // STEP 4: Run managed code
     //
+    using sonora::host::HostInterface;
     struct HostedMainArgs
     {
         int argc;
         const char_t *const *argv;
-        sonora::host::HostInterface host;
+        void (*GetHostInterface)(HostInterface *host);
     };
     // <SnippetCallManaged>
-    HostedMainArgs args { argc, argv };
-    args.host.Hello = []{std::cout << "Hello from C++\n";};
+    HostedMainArgs args {
+        argc,
+        argv,
+        [](HostInterface *host) { new (host) HostInterface(true); }
+    };
 
     hosted_main(&args, sizeof(args));
     // </SnippetCallManaged>

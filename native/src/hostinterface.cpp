@@ -4,12 +4,16 @@
 
 namespace sonora::host {
 
-void SnrHello() {
-  printf("Hello from C++\n");
+bool SnrIsHosted() {
+  return true;
 }
 
-HostInterface::HostInterface()
-  : Hello{SnrHello}
+bool SnrIsNotHosted() {
+  return false;
+}
+
+HostInterface::HostInterface(bool isHosted)
+  : IsHosted{isHosted ? SnrIsHosted : SnrIsNotHosted}
   , WaveNewFromFile{SnrWaveNewFromFile}
   , WaveFree{SnrWaveFree}
   , WaveGetFrames{SnrWaveGetFrames}

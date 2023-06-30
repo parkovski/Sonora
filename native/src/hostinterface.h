@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef ma_dr_wav_h
 typedef ma_dr_wav *PDrWav;
@@ -12,7 +13,7 @@ typedef void *PDrWav;
 namespace sonora::host {
 #endif
 
-typedef void (*FnHello)();
+typedef bool (*FnIsHosted)();
 typedef PDrWav (*FnWaveNewFromFile)(const char *filename);
 typedef void (*FnWaveFree)(PDrWav wave);
 typedef uint64_t (*FnWaveGetFrames)(PDrWav wave);
@@ -21,10 +22,10 @@ typedef uint64_t (*FnWaveReadFrames)(PDrWav wave, float *data, uint64_t size);
 
 typedef struct HostInterface {
 #ifdef __cplusplus
-  HostInterface();
+  HostInterface(bool isHosted);
 #endif
 
-  FnHello Hello;
+  FnIsHosted IsHosted;
 
   FnWaveNewFromFile WaveNewFromFile;
   FnWaveFree WaveFree;

@@ -8,9 +8,9 @@ public struct HostInterface
     internal static HostInterface _instance;
     public static ref readonly HostInterface Instance { get => ref _instance; }
 
-    public readonly bool IsValid => Hello != null;
+    public readonly bool IsValid => IsHosted != null;
 
-    public delegate void FnHello();
+    public delegate bool FnIsHosted();
 
     public delegate IntPtr FnWaveNewFromFile([MarshalAs(UnmanagedType.LPUTF8Str)] string filename);
     public delegate void FnWaveFree(IntPtr wave);
@@ -18,11 +18,22 @@ public struct HostInterface
     public delegate uint FnWaveGetChannels(IntPtr wave);
     public delegate ulong FnWaveReadFrames(IntPtr wave, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] float[] data, ulong size);
 
-    public FnHello Hello;
+    public FnIsHosted IsHosted;
 
     public FnWaveNewFromFile WaveNewFromFile;
     public FnWaveFree WaveFree;
     public FnWaveGetFrames WaveGetFrames;
     public FnWaveGetChannels WaveGetChannels;
     public FnWaveReadFrames WaveReadFrames;
+}
+
+public static class HostInterfaceLoader
+{
+    [DllImport("../../../../native/build/bin/sonoradbg")]
+    private static extern void GetHostInterface(ref HostInterface host);
+
+    public static void Load()
+    {
+        GetHostInterface(ref HostInterface._instance);
+    }
 }

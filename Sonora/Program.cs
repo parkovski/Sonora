@@ -10,8 +10,16 @@ public class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        if (!HostInterface.Instance.IsValid)
+        {
+            HostInterfaceLoader.Load();
+        }
+
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
@@ -25,7 +33,9 @@ public class Program
     {
         public int argc;
         public IntPtr argv;
-        public HostInterface host;
+
+        public delegate void FnGetHostInterface(ref HostInterface host);
+        public FnGetHostInterface GetHostInterface;
     }
 
     public static int HostedMain(IntPtr arg, int size)
@@ -56,8 +66,7 @@ public class Program
             }
         }
 
-        HostInterface._instance = hostedArgs.host;
-        HostInterface.Instance.Hello();
+        hostedArgs.GetHostInterface(ref HostInterface._instance);
 
         Main(args);
         return 0;
