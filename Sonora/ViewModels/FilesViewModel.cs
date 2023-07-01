@@ -28,6 +28,14 @@ public class FilesViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _files, value);
     }
 
+    public string? _selectedFile;
+
+    public string? SelectedFile
+    {
+        get => _selectedFile;
+        set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
+    }
+
     public ICommand ChooseDirectoryCommand { get; }
 
     public Interaction<Unit, string?> ShowOpenFolderDialog { get; }

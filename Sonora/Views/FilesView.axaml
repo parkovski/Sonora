@@ -18,11 +18,11 @@
     <conv:PathToWaveConverter x:Key="WaveConverter"/>
   </Control.Resources>
   <DockPanel>
-    <DockPanel DockPanel.Dock="Top">
-      <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,4,4,0" Content="..." Command="{Binding ChooseDirectoryCommand}"/>
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+      <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="4,4,4,0" Content="..." Command="{Binding ChooseDirectoryCommand}"/>
       <TextBlock Grid.Column="0" Text="{Binding Directory}" VerticalAlignment="Center" Margin="4,4,4,0"/>
     </DockPanel>
-    <ListBox ItemsSource="{Binding Files}">
+    <ListBox ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
           <flex:FlexPanel/>
@@ -31,8 +31,8 @@
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Vertical">
-            <views:WaveView Width="100" Height="100" Wave="{Binding, Converter={StaticResource WaveConverter}}"/>
-            <TextBlock Width="100" TextWrapping="Wrap" Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
+            <views:WaveView Width="200" Height="100" Wave="{Binding, Converter={StaticResource WaveConverter}}"/>
+            <TextBlock Width="200" TextWrapping="Wrap" Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
           </StackPanel>
         </DataTemplate>
       </ListBox.ItemTemplate>
