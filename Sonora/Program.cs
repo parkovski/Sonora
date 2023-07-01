@@ -75,6 +75,45 @@ public class Program
 
         hostedArgs.GetHostInterface(ref HostInterface._instance);
 
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "--device" && i < args.Length - 1)
+            {
+                if (uint.TryParse(args[i + 1], out uint value))
+                {
+                    ref readonly var host = ref HostInterface.Instance;
+                    var auctx = host.AudioContextNew();
+                    var devEnum = host.DeviceEnumeratorNew(auctx);
+                    var dev = host.DeviceNew(auctx, devEnum, true, value, HostInterface.AudioFormat.F32, 2, 0);
+                    Console.WriteLine("Press enter to start device.");
+                    Console.In.ReadLine();
+                    host.DeviceStart(dev);
+                    Console.WriteLine("Press enter to stop device.");
+                    Console.In.ReadLine();
+                    host.DeviceStop(dev);
+                    host.DeviceFree(dev);
+                    host.DeviceEnumeratorFree(devEnum);
+                    host.AudioContextFree(auctx);
+                    return 0;
+                }
+            }
+            else if (args[i] == "--list-devices")
+            {
+                ref readonly var host = ref HostInterface.Instance;
+                var auctx = host.AudioContextNew();
+                var devEnum = host.DeviceEnumeratorNew(auctx);
+                uint count = host.DeviceEnumeratorCount(devEnum, true);
+                for (uint n = 0; n < count; n++)
+                {
+                    var name = Marshal.PtrToStringUTF8(host.DeviceEnumeratorGetDeviceName(devEnum, true, n));
+                    Console.WriteLine($"{n}: {name}");
+                }
+                host.DeviceEnumeratorFree(devEnum);
+                host.AudioContextFree(auctx);
+                return 0;
+            }
+        }
+
         Main(args);
         return 0;
     }

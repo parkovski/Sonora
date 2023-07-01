@@ -10,9 +10,11 @@ namespace sonora::host {
 #ifdef miniaudio_h
 typedef ma_context *PMAContext;
 typedef ma_device_info *PMADeviceInfo;
+typedef ma_device *PMADevice;
 #else
 typedef void *PMAContext;
 typedef void *PMADeviceInfo;
+typedef void *PMADevice;
 #endif
 
 typedef struct DeviceEnumerator {
@@ -27,8 +29,19 @@ typedef void (*FnAudioContextFree)(PMAContext ctx);
 
 typedef DeviceEnumerator *(*FnDeviceEnumeratorNew)(PMAContext ctx);
 typedef void (*FnDeviceEnumeratorFree)(DeviceEnumerator *dev_enum);
-typedef uint32_t (*FnDeviceEnumeratorCount)(DeviceEnumerator *dev_enum, bool playback);
-typedef char *(*FnDeviceGetName)(DeviceEnumerator *dev_enum, bool playback, uint32_t index);
+typedef uint32_t (*FnDeviceEnumeratorCount)(DeviceEnumerator *dev_enum,
+                                            bool playback);
+typedef char *(*FnDeviceEnumeratorGetDeviceName)(DeviceEnumerator *dev_enum,
+                                                 bool playback,
+                                                 uint32_t index);
+
+typedef PMADevice (*FnDeviceNew)(PMAContext ctx, DeviceEnumerator *dev_enum,
+                                 bool playback, uint32_t index,
+                                 int format, uint32_t channels,
+                                 uint32_t sample_rate);
+typedef void (*FnDeviceFree)(PMADevice device);
+typedef void (*FnDeviceStart)(PMADevice device);
+typedef void (*FnDeviceStop)(PMADevice device);
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +53,15 @@ void SnrAudioContextFree(PMAContext ctx);
 DeviceEnumerator *SnrDeviceEnumeratorNew(PMAContext ctx);
 void SnrDeviceEnumeratorFree(DeviceEnumerator *dev_enum);
 uint32_t SnrDeviceEnumeratorCount(DeviceEnumerator *dev_enum, bool playback);
-char *SnrDeviceGetName(DeviceEnumerator *dev_enum, bool playback, uint32_t index);
+char *SnrDeviceEnumeratorGetDeviceName(DeviceEnumerator *dev_enum,
+                                       bool playback, uint32_t index);
+
+PMADevice SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
+                       bool playback, uint32_t index,
+                       int format, uint32_t channels, uint32_t sample_rate);
+void SnrDeviceFree(PMADevice device);
+void SnrDeviceStart(PMADevice device);
+void SnrDeviceStop(PMADevice device);
 
 #ifdef __cplusplus
 } // extern "C"

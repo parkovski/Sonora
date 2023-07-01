@@ -29,7 +29,12 @@ typedef struct HostInterface {
   FnDeviceEnumeratorNew DeviceEnumeratorNew;
   FnDeviceEnumeratorFree DeviceEnumeratorFree;
   FnDeviceEnumeratorCount DeviceEnumeratorCount;
-  FnDeviceGetName DeviceGetName;
+  FnDeviceEnumeratorGetDeviceName DeviceEnumeratorGetDeviceName;
+
+  FnDeviceNew DeviceNew;
+  FnDeviceFree DeviceFree;
+  FnDeviceStart DeviceStart;
+  FnDeviceStop DeviceStop;
 } HostInterface;
 
 #ifdef __cplusplus

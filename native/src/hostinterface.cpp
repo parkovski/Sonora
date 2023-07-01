@@ -24,7 +24,11 @@ HostInterface::HostInterface(bool isHosted)
   , DeviceEnumeratorNew{SnrDeviceEnumeratorNew}
   , DeviceEnumeratorFree{SnrDeviceEnumeratorFree}
   , DeviceEnumeratorCount{SnrDeviceEnumeratorCount}
-  , DeviceGetName{SnrDeviceGetName}
+  , DeviceEnumeratorGetDeviceName{SnrDeviceEnumeratorGetDeviceName}
+  , DeviceNew{SnrDeviceNew}
+  , DeviceFree{SnrDeviceFree}
+  , DeviceStart{SnrDeviceStart}
+  , DeviceStop{SnrDeviceStop}
 {}
 
 } // namespace sonora::host
