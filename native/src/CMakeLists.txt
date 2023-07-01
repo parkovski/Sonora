@@ -1,5 +1,6 @@
 set(SOURCES
   hostinterface.cpp
+  host-audio.c
   host-wave.c
   miniaudio.c
 )

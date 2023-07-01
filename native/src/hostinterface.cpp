@@ -19,6 +19,12 @@ HostInterface::HostInterface(bool isHosted)
   , WaveGetFrames{SnrWaveGetFrames}
   , WaveGetChannels{SnrWaveGetChannels}
   , WaveReadFrames{SnrWaveReadFrames}
+  , AudioContextNew{SnrAudioContextNew}
+  , AudioContextFree{SnrAudioContextFree}
+  , DeviceEnumeratorNew{SnrDeviceEnumeratorNew}
+  , DeviceEnumeratorFree{SnrDeviceEnumeratorFree}
+  , DeviceEnumeratorCount{SnrDeviceEnumeratorCount}
+  , DeviceGetName{SnrDeviceGetName}
 {}
 
 } // namespace sonora::host
