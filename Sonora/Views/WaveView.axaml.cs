@@ -10,10 +10,10 @@ namespace Sonora.Views;
 
 public partial class WaveView : UserControl
 {
-    public static readonly StyledProperty<WaveModel> WaveProperty =
-        AvaloniaProperty.Register<WaveView, WaveModel>(nameof(Wave));
+    public static readonly StyledProperty<Wave> WaveProperty =
+        AvaloniaProperty.Register<WaveView, Wave>(nameof(Wave));
 
-    public WaveModel Wave
+    public Wave Wave
     {
         get => GetValue(WaveProperty);
         set => SetValue(WaveProperty, value);

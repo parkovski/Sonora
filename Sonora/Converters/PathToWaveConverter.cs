@@ -15,12 +15,12 @@ public class PathToWaveConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value == null || value.GetType() != typeof(string) || targetType != typeof(WaveModel))
+        if (value == null || value.GetType() != typeof(string) || targetType != typeof(Wave))
         {
             return new BindingNotification(new ArgumentException("???"), BindingErrorType.Error);
         }
 
-        return new WaveModel((string)value);
+        return new Wave((string)value);
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

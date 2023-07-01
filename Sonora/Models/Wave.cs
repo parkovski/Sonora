@@ -1,6 +1,6 @@
 namespace Sonora.Models;
 
-public class WaveModel
+public class Wave
 {
     public float[] Data { get; }
     public uint Channels { get; }
@@ -9,7 +9,7 @@ public class WaveModel
 
     public float this[ulong index] => Data[index];
 
-    public WaveModel(float[] data, uint channels)
+    public Wave(float[] data, uint channels)
     {
         Data = data;
         Channels = channels;
@@ -20,7 +20,7 @@ public class WaveModel
         Frames = (ulong)data.LongLength / channels;
     }
 
-    public WaveModel(string filename)
+    public Wave(string filename)
     {
         if (!HostInterface.Instance.IsValid)
         {
