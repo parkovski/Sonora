@@ -9,6 +9,13 @@ public class Wave
 
     public float this[ulong index] => Data[index];
 
+    public Wave()
+    {
+        Data = new float[] { 0 };
+        Channels = 1;
+        Frames = 1;
+    }
+
     public Wave(float[] data, uint channels)
     {
         Data = data;

@@ -38,6 +38,8 @@ public partial class WaveView : UserControl
     public WaveView()
     {
         InitializeComponent();
+        AffectsRender<WaveView>(WaveProperty);
+        AffectsRender<WaveView>(DrawProperty);
     }
 
     public override void Render(DrawingContext context)
