@@ -10,7 +10,7 @@ public struct HostInterface
 
     public readonly bool IsValid => IsHosted != null;
 
-    #region Is hosted
+    #region Hosting
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate bool FnIsHosted();
@@ -97,6 +97,9 @@ public struct HostInterface
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void FnDeviceStop(nint device);
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FnDeviceSetOsc(nint device, int osc);
+
     #endregion
 
     public FnIsHosted IsHosted;
@@ -119,6 +122,7 @@ public struct HostInterface
     public FnDeviceFree DeviceFree;
     public FnDeviceStart DeviceStart;
     public FnDeviceStop DeviceStop;
+    public FnDeviceSetOsc DeviceSetOsc;
 }
 
 public static class HostInterfaceLoader

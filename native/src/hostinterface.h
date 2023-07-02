@@ -35,6 +35,7 @@ typedef struct HostInterface {
   FnDeviceFree DeviceFree;
   FnDeviceStart DeviceStart;
   FnDeviceStop DeviceStop;
+  FnDeviceSetOsc DeviceSetOsc;
 } HostInterface;
 
 #ifdef __cplusplus
