@@ -28,7 +28,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         ref readonly var host = ref HostInterface.Instance;
         _auctx = host.AudioContextNew();
         _devEnum = host.DeviceEnumeratorNew(_auctx);
-        _dev = host.DeviceNew(_auctx, _devEnum, true, 2, HostInterface.AudioFormat.F32, 2, 48000);
+        _dev = host.DeviceNew(_auctx, _devEnum, true, 2, 2, 48000);
         host.DeviceStart(_dev);
     }
 

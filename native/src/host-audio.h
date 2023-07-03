@@ -37,8 +37,7 @@ typedef char *(*FnDeviceEnumeratorGetDeviceName)(DeviceEnumerator *dev_enum,
 
 typedef PMADevice (*FnDeviceNew)(PMAContext ctx, DeviceEnumerator *dev_enum,
                                  bool playback, uint32_t index,
-                                 int format, uint32_t channels,
-                                 uint32_t sample_rate);
+                                 uint32_t channels, uint32_t sample_rate);
 typedef void (*FnDeviceFree)(PMADevice device);
 typedef void (*FnDeviceStart)(PMADevice device);
 typedef void (*FnDeviceStop)(PMADevice device);
@@ -59,7 +58,7 @@ char *SnrDeviceEnumeratorGetDeviceName(DeviceEnumerator *dev_enum,
 
 PMADevice SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
                        bool playback, uint32_t index,
-                       int format, uint32_t channels, uint32_t sample_rate);
+                       uint32_t channels, uint32_t sample_rate);
 void SnrDeviceFree(PMADevice device);
 void SnrDeviceStart(PMADevice device);
 void SnrDeviceStop(PMADevice device);

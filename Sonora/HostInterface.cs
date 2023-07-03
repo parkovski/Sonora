@@ -71,21 +71,9 @@ public struct HostInterface
 
     #region Device
 
-    // Must match ma_format in miniaudio.h
-    public enum AudioFormat
-    {
-        Unknown = 0,
-        U8      = 1,
-        S16     = 2,
-        S24     = 3,
-        S32     = 4,
-        F32     = 5,
-    }
-
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate nint FnDeviceNew(
         nint ctx, nint devEnum, bool playback, uint index,
-        [MarshalAs(UnmanagedType.I4)] AudioFormat format,
         uint channels, uint sampleRate);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

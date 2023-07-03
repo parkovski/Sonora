@@ -183,12 +183,12 @@ static struct SineWave *init_sine_wave(uint32_t channels, uint32_t sample_rate) 
 
 ma_device *SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
                         bool playback, uint32_t index,
-                        int format, uint32_t channels, uint32_t sample_rate) {
+                        uint32_t channels, uint32_t sample_rate) {
   ma_device_config config;
   if (playback) {
     config = ma_device_config_init(ma_device_type_playback);
     config.playback.pDeviceID = &dev_enum->playback_infos[index].id;
-    config.playback.format = format;
+    config.playback.format = ma_format_f32;
     config.playback.channels = channels;
     config.sampleRate = sample_rate;
     config.dataCallback = playback_callback;
@@ -196,7 +196,7 @@ ma_device *SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
   } else {
     config = ma_device_config_init(ma_device_type_capture);
     config.capture.pDeviceID = &dev_enum->capture_infos[index].id;
-    config.capture.format = format;
+    config.capture.format = ma_format_f32;
     config.capture.channels = channels;
     config.sampleRate = sample_rate;
     config.dataCallback = NULL;

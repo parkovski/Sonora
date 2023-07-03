@@ -84,7 +84,7 @@ public class Program
                     ref readonly var host = ref HostInterface.Instance;
                     var auctx = host.AudioContextNew();
                     var devEnum = host.DeviceEnumeratorNew(auctx);
-                    var dev = host.DeviceNew(auctx, devEnum, true, value, HostInterface.AudioFormat.F32, 2, 48000);
+                    var dev = host.DeviceNew(auctx, devEnum, true, value, 2, 48000);
                     Console.WriteLine("Press enter to start device.");
                     Console.In.ReadLine();
                     host.DeviceStart(dev);
