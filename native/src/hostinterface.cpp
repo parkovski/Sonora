@@ -30,6 +30,7 @@ HostInterface::HostInterface(bool isHosted)
   , DeviceStart{SnrDeviceStart}
   , DeviceStop{SnrDeviceStop}
   , DeviceSetOsc{SnrDeviceSetOsc}
+  , DeviceSetNote{SnrDeviceSetNote}
 {}
 
 } // namespace sonora::host

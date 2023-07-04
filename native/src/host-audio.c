@@ -82,6 +82,11 @@ static struct Osc *OscNew(float freq, uint32_t sample_rate) {
   return osc;
 }
 
+static void OscSetNote(struct Osc *osc, uint8_t note) {
+  osc->freq = 440 * powf(2, ((int8_t)note - 69) / 12.f);
+  OscUpdateIncrement(osc);
+}
+
 static void OscGenerate(struct Osc *osc, float *buf, uint32_t frames) {
   uint32_t channels = osc->channels;
 
@@ -138,6 +143,10 @@ void SnrDeviceSetOsc(ma_device *device, int osc) {
   if (osc < 0) osc = 0;
   if (osc > 3) osc = 3;
   ((struct Osc *)device->pUserData)->mode = osc;
+}
+
+void SnrDeviceSetNote(ma_device *device, uint8_t note) {
+  OscSetNote(device->pUserData, note);
 }
 
 #if 0

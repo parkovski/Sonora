@@ -14,13 +14,15 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
-  <Grid ColumnDefinitions="*,4,*">
+  <Grid ColumnDefinitions="*,4,2*">
     <local:FilesView Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding Files}"/>
     <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
     <DockPanel Grid.Column="2">
       <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" Margin="4">
         <Button Content="Start" x:Name="StartBtn"/>
         <Button Content="Stop" x:Name="StopBtn"/>
+        <TextBox Text="A4" x:Name="Note"/>
+        <Button Content="Set note" x:Name="SetNoteBtn"/>
       </StackPanel>
       <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" Margin="4">
         <Button Content="Sine" x:Name="SineBtn"/>

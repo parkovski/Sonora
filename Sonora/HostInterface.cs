@@ -88,6 +88,9 @@ public struct HostInterface
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void FnDeviceSetOsc(nint device, int osc);
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FnDeviceSetNote(nint device, byte note);
+
     #endregion
 
     public FnIsHosted IsHosted;
@@ -111,6 +114,7 @@ public struct HostInterface
     public FnDeviceStart DeviceStart;
     public FnDeviceStop DeviceStop;
     public FnDeviceSetOsc DeviceSetOsc;
+    public FnDeviceSetNote DeviceSetNote;
 }
 
 public static class HostInterfaceLoader
