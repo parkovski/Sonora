@@ -1,11 +1,12 @@
 #pragma once
 
-#include "host-wave.h"
-#include "host-audio.h"
-#include <stdbool.h>
+#include "audiocontext.h"
+#include "deviceenumerator.h"
+#include "device.h"
+#include "wave.h"
 
 #ifdef __cplusplus
-namespace sonora::host {
+namespace sonora {
 #endif
 
 typedef bool (*FnIsHosted)();
@@ -40,5 +41,5 @@ typedef struct HostInterface {
 } HostInterface;
 
 #ifdef __cplusplus
-} // namespace sonora::host
+} // namespace sonora
 #endif

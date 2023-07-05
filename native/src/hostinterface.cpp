@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-namespace sonora::host {
+namespace sonora {
 
 bool SnrIsHosted() {
   return true;
@@ -33,4 +33,4 @@ HostInterface::HostInterface(bool isHosted)
   , DeviceSetNote{SnrDeviceSetNote}
 {}
 
-} // namespace sonora::host
+} // namespace sonora

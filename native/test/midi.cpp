@@ -8,7 +8,7 @@
 #include "../src/hostinterface.h"
 
 void midi_read(PmStream *stream, bool *stop) {
-  using namespace sonora::host;
+  using namespace sonora;
   PMAContext ctx = SnrAudioContextNew();
   DeviceEnumerator *devEnum = SnrDeviceEnumeratorNew(ctx);
   PMADevice dev = SnrDeviceNew(ctx, devEnum, true, 2, 2, 44100);

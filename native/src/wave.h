@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-namespace sonora::host {
+namespace sonora {
 #endif
 
 #ifdef ma_dr_wav_h
@@ -30,5 +30,5 @@ uint64_t SnrWaveReadFrames(PDRWav wave, float *data, uint64_t size);
 
 #ifdef __cplusplus
 } // extern "C"
-} // namespace sonora::host
+} // namespace sonora
 #endif

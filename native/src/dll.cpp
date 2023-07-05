@@ -8,6 +8,6 @@ __declspec(dllexport)
 #else
 __attribute__((visibility("default")))
 #endif
-GetHostInterface(sonora::host::HostInterface *host) {
-  new (host) sonora::host::HostInterface(false);
+GetHostInterface(sonora::HostInterface *host) {
+  new (host) sonora::HostInterface(false);
 }

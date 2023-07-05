@@ -3,7 +3,7 @@ add_executable(test
 )
 
 target_link_libraries(test PRIVATE
-  sonora-library
+  sonora-objects
   Catch2::Catch2WithMain
 )
 
@@ -12,4 +12,4 @@ include(Catch)
 catch_discover_tests(test)
 
 add_executable(midi midi.cpp)
-target_link_libraries(midi PRIVATE sonora-library PortMidi::portmidi)
+target_link_libraries(midi PRIVATE sonora-objects PortMidi::portmidi)

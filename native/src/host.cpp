@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
     //
     // STEP 4: Run managed code
     //
-    using sonora::host::HostInterface;
+    using sonora::HostInterface;
     struct HostedMainArgs
     {
         int argc;
