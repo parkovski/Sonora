@@ -31,9 +31,8 @@ typedef DeviceEnumerator *(*FnDeviceEnumeratorNew)(PMAContext ctx);
 typedef void (*FnDeviceEnumeratorFree)(DeviceEnumerator *dev_enum);
 typedef uint32_t (*FnDeviceEnumeratorCount)(DeviceEnumerator *dev_enum,
                                             bool playback);
-typedef char *(*FnDeviceEnumeratorGetDeviceName)(DeviceEnumerator *dev_enum,
-                                                 bool playback,
-                                                 uint32_t index);
+typedef const char *(*FnDeviceEnumeratorGetDeviceName)(
+  DeviceEnumerator *dev_enum, bool playback, uint32_t index);
 
 typedef PMADevice (*FnDeviceNew)(PMAContext ctx, DeviceEnumerator *dev_enum,
                                  bool playback, uint32_t index,
@@ -56,8 +55,9 @@ void SnrAudioContextFree(PMAContext ctx);
 DeviceEnumerator *SnrDeviceEnumeratorNew(PMAContext ctx);
 void SnrDeviceEnumeratorFree(DeviceEnumerator *dev_enum);
 uint32_t SnrDeviceEnumeratorCount(DeviceEnumerator *dev_enum, bool playback);
-char *SnrDeviceEnumeratorGetDeviceName(DeviceEnumerator *dev_enum,
-                                       bool playback, uint32_t index);
+const char *
+SnrDeviceEnumeratorGetDeviceName(DeviceEnumerator *dev_enum,
+                                 bool playback, uint32_t index);
 
 PMADevice SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
                        bool playback, uint32_t index,

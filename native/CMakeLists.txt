@@ -21,6 +21,9 @@ endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
+# find_package(rtmidi CONFIG REQUIRED)
+find_package(PortMidi CONFIG REQUIRED)
+
 add_subdirectory(src)
 
 if(CMAKE_BUILD_TYPE STREQUAL Debug)

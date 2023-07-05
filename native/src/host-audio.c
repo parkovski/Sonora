@@ -42,9 +42,9 @@ uint32_t SnrDeviceEnumeratorCount(DeviceEnumerator *dev_enum, bool playback) {
   }
 }
 
-char *SnrDeviceEnumeratorGetDeviceName(DeviceEnumerator *dev_enum,
-                                       bool playback,
-                                       uint32_t index) {
+const char *
+SnrDeviceEnumeratorGetDeviceName(DeviceEnumerator *dev_enum,
+                                 bool playback, uint32_t index) {
   if (playback) {
     return dev_enum->playback_infos[index].name;
   } else {
@@ -201,7 +201,7 @@ ma_device *SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
     config.playback.channels = channels;
     config.sampleRate = sample_rate;
     config.dataCallback = playback_callback;
-    config.pUserData = OscNew(220, 48000);
+    config.pUserData = OscNew(220, sample_rate);
   } else {
     config = ma_device_config_init(ma_device_type_capture);
     config.capture.pDeviceID = &dev_enum->capture_infos[index].id;
