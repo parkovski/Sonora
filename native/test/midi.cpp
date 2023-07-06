@@ -13,6 +13,7 @@ void midi_read(PmStream *stream, bool *stop) {
   DeviceEnumerator *devEnum = SnrDeviceEnumeratorNew(ctx);
   PMADevice dev = SnrDeviceNew(ctx, devEnum, true, 2, 2, 44100);
   SnrDeviceEnumeratorFree(devEnum);
+  Instrument *ins = SnrDeviceGetInstrument(dev);
   SnrDeviceStart(dev);
 
   PmEvent buf[100];
@@ -27,10 +28,14 @@ void midi_read(PmStream *stream, bool *stop) {
     for (int i = 0; i < r; ++i) {
       int status = Pm_MessageStatus(buf[i].message);
       if (status == 0x90) {
-        printf("Note on: %d\n", Pm_MessageData1(buf[i].message));
-        SnrDeviceSetNote(dev, Pm_MessageData1(buf[i].message));
+        auto noteval = Pm_MessageData1(buf[i].message);
+        auto velo = Pm_MessageData2(buf[i].message);
+        printf("Note on: N=%d, V=%d\n", noteval, velo);
+        SnrInstrumentAddVoice(ins, noteval, velo / 255.f);
       } else if (status == 0x80) {
-        printf("Note off: %d\n", Pm_MessageData1(buf[i].message));
+        auto noteval = Pm_MessageData1(buf[i].message);
+        SnrInstrumentReleaseVoice(ins, noteval);
+        printf("Note off: %d\n", noteval);
       }
     }
   }

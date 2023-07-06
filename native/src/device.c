@@ -4,143 +4,11 @@
 #include <stdio.h>
 #include <math.h>
 
-static const float Tau = 6.28318530717959f;
-struct Osc {
-  enum {
-    OscSine,
-    OscSaw,
-    OscSquare,
-    OscTriangle,
-  } mode;
-  float freq;
-  float phase;
-  uint32_t channels;
-  uint32_t sample_rate;
-  float phase_increment;
-};
-
-static void OscUpdateIncrement(struct Osc *osc) {
-  osc->phase_increment = osc->freq * Tau / osc->sample_rate;
-}
-
-static struct Osc *OscNew(float freq, uint32_t sample_rate) {
-  struct Osc *osc = malloc(sizeof(struct Osc));
-  osc->mode = OscSine;
-  osc->freq = freq;
-  osc->phase = 0;
-  osc->channels = 2;
-  osc->sample_rate = sample_rate;
-  OscUpdateIncrement(osc);
-  return osc;
-}
-
-static void OscSetNote(struct Osc *osc, uint8_t note) {
-  osc->freq = 440 * powf(2, ((int8_t)note - 69) / 12.f);
-  OscUpdateIncrement(osc);
-}
-
-static void OscGenerate(struct Osc *osc, float *buf, uint32_t frames) {
-  uint32_t channels = osc->channels;
-
-#define BEGIN \
-  for (uint32_t i = 0; i < frames; ++i) {
-#define END \
-    for (uint32_t j = 0; j < channels; ++j) { \
-      buf[i*channels+j] = value; \
-    } \
-    osc->phase += osc->phase_increment; \
-    while (osc->phase >= Tau) { \
-      osc->phase -= Tau; \
-    } \
-  }
-
-  switch (osc->mode) {
-  case OscSine:
-    BEGIN
-      float value = sinf(osc->phase);
-    END
-    break;
-
-  case OscSaw:
-    BEGIN
-      float value = 1.0f - 2.0f * osc->phase / Tau;
-    END
-    break;
-
-  case OscSquare:
-    BEGIN
-      float value = osc->phase <= 3.14159f ? 1.0f : -1.0f;
-    END
-    break;
-
-  case OscTriangle:
-    BEGIN
-      float value = 2.0f * (fabsf(-1.0f + 2.0f * osc->phase / Tau) - 0.5f);
-    END
-    break;
-  }
-
-#undef BEGIN
-#undef END
-}
-
 static void playback_callback(ma_device *device, void *out, const void *in,
                               uint32_t frames) {
   (void)in;
-  struct Osc *osc = device->pUserData;
-  OscGenerate(osc, out, frames);
+  SnrInstrumentGenerate(device->pUserData, frames, out);
 }
-
-void SnrDeviceSetOsc(ma_device *device, int osc) {
-  if (osc < 0) osc = 0;
-  if (osc > 3) osc = 3;
-  ((struct Osc *)device->pUserData)->mode = osc;
-}
-
-void SnrDeviceSetNote(ma_device *device, uint8_t note) {
-  OscSetNote(device->pUserData, note);
-}
-
-#if 0
-struct SineWave {
-  float *samples;
-  size_t sample_count;
-  size_t offset;
-};
-
-static void playback_callback(ma_device *device, void *out, const void *in,
-                              uint32_t frames) {
-  (void)in;
-  struct SineWave *wave = device->pUserData;
-  size_t offset = wave->offset;
-  uint32_t channels = device->playback.channels;
-  for (uint32_t i = 0; i < frames; ++i) {
-    if (offset >= wave->sample_count) {
-      offset = 0;
-    }
-    for (uint32_t j = 0; j < channels; ++j) {
-      ((float*)out)[i * channels + j] = wave->samples[offset];
-      ++offset;
-    }
-  }
-  wave->offset = offset;
-}
-
-static struct SineWave *init_sine_wave(uint32_t channels, uint32_t sample_rate) {
-  size_t sample_count = channels * sample_rate / 440;
-  struct SineWave *wave = malloc(sizeof(struct SineWave) + sizeof(float) * sample_count);
-  float *samples = wave->samples = (float*)((char*)wave + sizeof(struct SineWave));
-  wave->sample_count = sample_count;
-  wave->offset = 0;
-  for (size_t i = 0; i < sample_count; i += channels) {
-    float value = sinf(2 * 3.14159f * (float)i / sample_count);
-    for (size_t j = 0; j < channels; ++j) {
-      samples[i + j] = value;
-    }
-  }
-  return wave;
-}
-#endif
 
 ma_device *SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
                         bool playback, uint32_t index,
@@ -153,7 +21,7 @@ ma_device *SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
     config.playback.channels = channels;
     config.sampleRate = sample_rate;
     config.dataCallback = playback_callback;
-    config.pUserData = OscNew(220, sample_rate);
+    config.pUserData = SnrInstrumentNew(channels, sample_rate);
   } else {
     config = ma_device_config_init(ma_device_type_capture);
     config.capture.pDeviceID = &dev_enum->capture_infos[index].id;
@@ -176,7 +44,7 @@ ma_device *SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
 
 void SnrDeviceFree(PMADevice device) {
   if (device->pUserData) {
-    free(device->pUserData);
+    SnrInstrumentFree(device->pUserData);
   }
   ma_device_uninit(device);
   free(device);
@@ -188,4 +56,8 @@ void SnrDeviceStart(PMADevice device) {
 
 void SnrDeviceStop(PMADevice device) {
   ma_device_stop(device);
+}
+
+Instrument *SnrDeviceGetInstrument(PMADevice device) {
+  return device->pUserData;
 }

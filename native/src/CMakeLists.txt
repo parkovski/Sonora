@@ -3,7 +3,10 @@ set(SOURCES
   device.c
   deviceenumerator.c
   hostinterface.cpp
+  instrument.c
   miniaudio.c
+  oscillator.c
+  voice.c
   wave.c
 )
 

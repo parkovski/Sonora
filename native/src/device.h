@@ -2,6 +2,7 @@
 
 #include "audiocontext.h"
 #include "deviceenumerator.h"
+#include "instrument.h"
 
 #ifdef __cplusplus
 namespace sonora {
@@ -19,10 +20,7 @@ typedef PMADevice (*FnDeviceNew)(PMAContext ctx, DeviceEnumerator *dev_enum,
 typedef void (*FnDeviceFree)(PMADevice device);
 typedef void (*FnDeviceStart)(PMADevice device);
 typedef void (*FnDeviceStop)(PMADevice device);
-
-// Temp
-typedef void (*FnDeviceSetOsc)(PMADevice device, int osc);
-typedef void (*FnDeviceSetNote)(PMADevice device, uint8_t note);
+typedef Instrument *(*FnDeviceGetInstrument)(PMADevice device);
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,8 +32,7 @@ PMADevice SnrDeviceNew(PMAContext ctx, DeviceEnumerator *dev_enum,
 void SnrDeviceFree(PMADevice device);
 void SnrDeviceStart(PMADevice device);
 void SnrDeviceStop(PMADevice device);
-void SnrDeviceSetOsc(PMADevice device, int osc);
-void SnrDeviceSetNote(PMADevice device, uint8_t note);
+Instrument *SnrDeviceGetInstrument(PMADevice device);
 
 #ifdef __cplusplus
 } // extern "C"

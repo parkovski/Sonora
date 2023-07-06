@@ -86,10 +86,27 @@ public struct HostInterface
     public delegate void FnDeviceStop(nint device);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void FnDeviceSetOsc(nint device, int osc);
+    public delegate nint FnDeviceGetInstrument(nint device);
+
+    #endregion
+
+    #region Instrument
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void FnDeviceSetNote(nint device, byte note);
+    public delegate nint FnInstrumentNew(uint channels, uint sampleRate);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FnInstrumentFree(nint instr);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FnInstrumentAddVoice(nint instr, byte note, float velocity);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FnInstrumentReleaseVoice(nint instr, byte note);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FnInstrumentGenerate(nint instr, uint count,
+        [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] float[] frames);
 
     #endregion
 
@@ -113,8 +130,13 @@ public struct HostInterface
     public FnDeviceFree DeviceFree;
     public FnDeviceStart DeviceStart;
     public FnDeviceStop DeviceStop;
-    public FnDeviceSetOsc DeviceSetOsc;
-    public FnDeviceSetNote DeviceSetNote;
+    public FnDeviceGetInstrument DeviceGetInstrument;
+
+    public FnInstrumentNew InstrumentNew;
+    public FnInstrumentFree InstrumentFree;
+    public FnInstrumentAddVoice InstrumentAddVoice;
+    public FnInstrumentReleaseVoice InstrumentReleaseVoice;
+    public FnInstrumentGenerate InstrumentGenerate;
 }
 
 public static class HostInterfaceLoader

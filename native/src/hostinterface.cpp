@@ -29,8 +29,12 @@ HostInterface::HostInterface(bool isHosted)
   , DeviceFree{SnrDeviceFree}
   , DeviceStart{SnrDeviceStart}
   , DeviceStop{SnrDeviceStop}
-  , DeviceSetOsc{SnrDeviceSetOsc}
-  , DeviceSetNote{SnrDeviceSetNote}
+  , DeviceGetInstrument{SnrDeviceGetInstrument}
+  , InstrumentNew{SnrInstrumentNew}
+  , InstrumentFree{SnrInstrumentFree}
+  , InstrumentAddVoice{SnrInstrumentAddVoice}
+  , InstrumentReleaseVoice{SnrInstrumentReleaseVoice}
+  , InstrumentGenerate{SnrInstrumentGenerate}
 {}
 
 } // namespace sonora

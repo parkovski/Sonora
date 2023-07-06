@@ -36,8 +36,13 @@ typedef struct HostInterface {
   FnDeviceFree DeviceFree;
   FnDeviceStart DeviceStart;
   FnDeviceStop DeviceStop;
-  FnDeviceSetOsc DeviceSetOsc;
-  FnDeviceSetNote DeviceSetNote;
+  FnDeviceGetInstrument DeviceGetInstrument;
+
+  FnInstrumentNew InstrumentNew;
+  FnInstrumentFree InstrumentFree;
+  FnInstrumentAddVoice InstrumentAddVoice;
+  FnInstrumentReleaseVoice InstrumentReleaseVoice;
+  FnInstrumentGenerate InstrumentGenerate;
 } HostInterface;
 
 #ifdef __cplusplus

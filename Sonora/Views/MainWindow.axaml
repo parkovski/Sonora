@@ -18,18 +18,6 @@
     <local:FilesView Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding Files}"/>
     <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
     <DockPanel Grid.Column="2">
-      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" Margin="4">
-        <Button Content="Start" x:Name="StartBtn"/>
-        <Button Content="Stop" x:Name="StopBtn"/>
-        <TextBox Text="A4" x:Name="Note"/>
-        <Button Content="Set note" x:Name="SetNoteBtn"/>
-      </StackPanel>
-      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" Margin="4">
-        <Button Content="Sine" x:Name="SineBtn"/>
-        <Button Content="Saw" x:Name="SawBtn"/>
-        <Button Content="Square" x:Name="SquareBtn"/>
-        <Button Content="Triangle" x:Name="TriangleBtn"/>
-      </StackPanel>
       <local:WaveView Wave="{Binding Wave}" Width="400" Height="400"/>
     </DockPanel>
   </Grid>

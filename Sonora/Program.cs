@@ -77,36 +77,7 @@ public class Program
 
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i] == "--device" && i < args.Length - 1)
-            {
-                if (uint.TryParse(args[i + 1], out uint value))
-                {
-                    ref readonly var host = ref HostInterface.Instance;
-                    var auctx = host.AudioContextNew();
-                    var devEnum = host.DeviceEnumeratorNew(auctx);
-                    var dev = host.DeviceNew(auctx, devEnum, true, value, 2, 48000);
-                    Console.WriteLine("Press enter to start device.");
-                    Console.In.ReadLine();
-                    host.DeviceStart(dev);
-                    Console.WriteLine("Type value 0-3 to change osc, or press enter to stop device.");
-                    string? line = string.Empty;
-                    while (true)
-                    {
-                        line = Console.In.ReadLine();
-                        if (string.IsNullOrEmpty(line)) break;
-                        if (int.TryParse(line, out int osc))
-                        {
-                            host.DeviceSetOsc(dev, osc);
-                        }
-                    }
-                    host.DeviceStop(dev);
-                    host.DeviceFree(dev);
-                    host.DeviceEnumeratorFree(devEnum);
-                    host.AudioContextFree(auctx);
-                    return 0;
-                }
-            }
-            else if (args[i] == "--list-devices")
+            if (args[i] == "--list-devices")
             {
                 ref readonly var host = ref HostInterface.Instance;
                 var auctx = host.AudioContextNew();
