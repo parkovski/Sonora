@@ -16,6 +16,8 @@ public partial class FilesView : UserControl
     }
 
     async void OnPointerPressed(object? sender, PointerPressedEventArgs e) {
+        base.OnPointerPressed(e);
+
         if (sender is not Control control) {
             return;
         }
