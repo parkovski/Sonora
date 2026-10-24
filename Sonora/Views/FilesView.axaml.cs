@@ -23,18 +23,15 @@ public partial class FilesView : UserControl
         if (control.DataContext is string item) {
             var data = new DataTransfer();
             var dataItem = new DataTransferItem();
-            //dataItem.Set(DataFormat.Text, item);
-            dataItem.Set(
-                DataFormat.File,
-                await TopLevel.GetTopLevel(this)!
-                    .StorageProvider
-                    .TryGetFileFromPathAsync(item)
-            );
-            //dataItem.Set(DataFormat.CreateStringPlatformFormat("audio/wav"),
-            //             item);
-            data.Add(dataItem);
+            var file = await TopLevel.GetTopLevel(this)!
+                .StorageProvider
+                .TryGetFileFromPathAsync(item);
 
-            await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move);
+            if (file != null) {
+                dataItem.Set(DataFormat.File, file);
+                data.Add(dataItem);
+                await DragDrop.DoDragDropAsync(e, data, DragDropEffects.Move);
+            }
         }
     }
 }
