@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Sonora.ViewModels"
+             xmlns:ctrl="using:Sonora.Controls"
+             xmlns:conv="using:Sonora.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sonora.Views.FilesView"
+             x:DataType="vm:FilesViewModel">
+    <Design.DataContext>
+        <vm:FilesViewModel/>
+    </Design.DataContext>
+    <Control.Resources>
+        <conv:PathToFileNameConverter x:Key="FileNameConverter"/>
+        <conv:PathToWaveConverter x:Key="WaveConverter"/>
+    </Control.Resources>
+    <Control.DataContext>
+        <vm:FilesViewModel/>
+    </Control.DataContext>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+            <Button DockPanel.Dock="Right" HorizontalAlignment="Right"
+                Margin="4,4,4,0" Content="..."
+                Command="{Binding ChooseDirectoryCommand}"/>
+            <TextBlock Text="{Binding Directory}" VerticalAlignment="Center" Margin="4,4,4,0"/>
+        </DockPanel>
+        <ListBox x:Name="listBox" ItemsSource="{Binding Files}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical"
+                        PointerPressed="OnPointerPressed">
+                        <ctrl:WaveControl Width="200" Height="100"
+                            Wave="{Binding, Converter={StaticResource WaveConverter}}"/>
+                        <TextBlock Width="200" TextWrapping="Wrap"
+                            Text="{Binding, Converter={StaticResource FileNameConverter}}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>

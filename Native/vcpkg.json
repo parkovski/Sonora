@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "sonora",
+  "version-string": "0.1-alpha",
+  "dependencies": [],
+  "features": {
+    "test": {
+      "description": "Build tests",
+      "dependencies": [
+        {
+          "name": "catch2",
+          "host": true
+        }
+      ]
+    }
+  },
+  "builtin-baseline": "bf19794383e8fb95eba5aa553235bc8ec2271688"
+}
