@@ -5,7 +5,8 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:views="using:Sonora.Views"
-                 xmlns:controls="using:Sonora.Controls"
+                 xmlns:ctrl="using:Sonora.Controls"
+                 xmlns:conv="using:Sonora.Converters"
                  mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                  x:Class="Sonora.Views.MainWindow"
                  x:DataType="vm:MainViewModel"
@@ -18,12 +19,15 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainViewModel />
     </Design.DataContext>
+    <Control.Resources>
+        <conv:PathToWaveConverter x:Key="WaveConverter"/>
+    </Control.Resources>
 
     <Grid ColumnDefinitions="*,4,2*">
-        <views:FilesView Grid.Column="0" />
+        <views:FilesView Grid.Column="0" DataContext="{Binding Files}"/>
         <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
         <DockPanel Grid.Column="2">
-            <controls:WaveControl/>
+            <ctrl:WaveControl Wave="{Binding Files.SelectedFile, Converter={StaticResource WaveConverter}}"/>
         </DockPanel>
     </Grid>
 </suki:SukiWindow>

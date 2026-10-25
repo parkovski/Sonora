@@ -10,9 +10,11 @@ public partial class FilesView : UserControl
     public FilesView()
     {
         InitializeComponent();
-        if (DataContext is IViewToViewModelBridge bridge) {
-            bridge.View = this;
-        }
+        this.DataContextChanged += (s, e) => {
+            if (DataContext is IViewToViewModelBridge bridge) {
+                bridge.View = this;
+            }
+        };
     }
 
     async void OnPointerPressed(object? sender, PointerPressedEventArgs e) {
@@ -21,7 +23,7 @@ public partial class FilesView : UserControl
         if (sender is not Control control) {
             return;
         }
-        Console.WriteLine(control.DataContext!.GetType());
+
         if (control.DataContext is string item) {
             var data = new DataTransfer();
             var dataItem = new DataTransferItem();

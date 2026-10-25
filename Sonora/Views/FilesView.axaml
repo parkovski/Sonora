@@ -15,9 +15,6 @@
         <conv:PathToFileNameConverter x:Key="FileNameConverter"/>
         <conv:PathToWaveConverter x:Key="WaveConverter"/>
     </Control.Resources>
-    <Control.DataContext>
-        <vm:FilesViewModel/>
-    </Control.DataContext>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
             <Button DockPanel.Dock="Right" HorizontalAlignment="Right"
@@ -25,7 +22,8 @@
                 Command="{Binding ChooseDirectoryCommand}"/>
             <TextBlock Text="{Binding Directory}" VerticalAlignment="Center" Margin="4,4,4,0"/>
         </DockPanel>
-        <ListBox x:Name="listBox" ItemsSource="{Binding Files}">
+        <ListBox x:Name="listBox" ItemsSource="{Binding Files}"
+            SelectedItem="{Binding SelectedFile, Mode=TwoWay}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel/>

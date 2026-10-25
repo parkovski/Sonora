@@ -1,6 +1,7 @@
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using System.Globalization;
+using System.IO;
 
 namespace Sonora.Converters;
 
@@ -13,15 +14,7 @@ public class PathToFileNameConverter : IValueConverter {
             return new BindingNotification(new InvalidCastException(),
                                            BindingErrorType.Error);
         }
-        var name = value.ToString()!;
-        var lastSep = name.LastIndexOf('/');
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-            var lastSep2 = name.LastIndexOf('\\');
-            if (lastSep2 > lastSep) {
-                lastSep = lastSep2;
-            }
-        }
-        return name.Substring(lastSep + 1);
+        return Path.GetFileName((string)value);
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter,

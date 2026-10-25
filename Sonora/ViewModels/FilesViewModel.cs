@@ -12,8 +12,15 @@ public partial class FilesViewModel : ViewModelBase {
     [ObservableProperty] string? _selectedFile;
 
     public FilesViewModel() {
-        _directory = Environment.CurrentDirectory;
-        _files = new List<string>();
+        Files = new List<string>(); // Shut up the compiler
+        this.PropertyChanged += (sender, e) => {
+            if (e.PropertyName == nameof(Directory)) {
+                Files = System.IO.Directory.EnumerateFiles(Directory)
+                    .Where(name => name.EndsWith(".wav"))
+                    .ToList();
+            }
+        };
+        Directory = Environment.CurrentDirectory;
     }
 
     [RelayCommand]
@@ -22,10 +29,6 @@ public partial class FilesViewModel : ViewModelBase {
             var folders = await provider.OpenFolderPickerAsync(new());
             if (folders.Count > 0) {
                 Directory = folders[0].Path.LocalPath;
-                Files = await folders[0].GetItemsAsync()
-                    .Select(i => i.Path.LocalPath)
-                    .Where(path => path.EndsWith(".wav"))
-                    .ToListAsync();
             }
         }
     }
