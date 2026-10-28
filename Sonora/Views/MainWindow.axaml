@@ -11,7 +11,7 @@
                  x:Class="Sonora.Views.MainWindow"
                  x:DataType="vm:MainViewModel"
                  BackgroundStyle="GradientSoft"
-                 Icon="/Assets/avalonia-logo.ico"
+                 Icon="/Assets/saguaro.ico"
                  Title="Sonora">
 
     <Design.DataContext>
