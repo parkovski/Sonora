@@ -1,10 +1,10 @@
 set(SOURCES
-  dr_libs.c
-  miniaudio.c
+  dr_libs/dr_libs.c
+  miniaudio/miniaudio.c
   wave.c
 )
 
-add_executable(sonora host.cpp)
+add_executable(sonora nethost/host.cpp)
 set_target_properties(sonora PROPERTIES OUTPUT_NAME Sonora)
 target_link_directories(sonora PRIVATE
   "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.13/runtimes/win-x64/native"

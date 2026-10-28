@@ -1,5 +1,5 @@
 // Must come before hostinterface.h for typedefs to work properly.
-#include "dr_wav.h"
+#include "dr_libs/dr_wav.h"
 #include "sonora.h"
 
 #include <stdlib.h>
