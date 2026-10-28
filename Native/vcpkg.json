@@ -2,7 +2,20 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
   "name": "sonora",
   "version-string": "0.1-alpha",
-  "dependencies": [],
+  "builtin-baseline": "bf19794383e8fb95eba5aa553235bc8ec2271688",
+  "dependencies": [
+    "libremidi",
+    "fmt",
+    {
+      "name": "spdlog",
+      "platform": "windows",
+      "features": ["wchar"]
+    },
+    {
+      "name": "spdlog",
+      "platform": "!windows"
+    }
+  ],
   "features": {
     "test": {
       "description": "Build tests",
@@ -13,6 +26,5 @@
         }
       ]
     }
-  },
-  "builtin-baseline": "bf19794383e8fb95eba5aa553235bc8ec2271688"
+  }
 }

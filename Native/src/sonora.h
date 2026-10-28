@@ -9,3 +9,9 @@
 #else
 # define SNREXPORT
 #endif
+
+#ifdef __cplusplus
+# define SNRAPI extern "C"
+#else
+# define SNRAPI
+#endif

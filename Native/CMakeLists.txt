@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 4.4.4 FATAL_ERROR)
 
+option(BUILD_TESTING "Build tests" OFF)
+if(BUILD_TESTING)
+  list(APPEND VCPKG_MANIFEST_FEATURES "test")
+endif()
+
 project(Sonora LANGUAGES C CXX)
 
 set(Sonora_VERSION_MAJOR 0)
@@ -14,19 +19,14 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE MATCHES "Deb")
-  if(NOT DEFINED BUILD_TESTING)
-    set(BUILD_TESTING ON)
-  endif()
-endif()
-option(BUILD_TESTING "Build tests" OFF)
-if(BUILD_TESTING)
-  list(APPEND VCPKG_MANIFEST_FEATURES "test")
-endif()
-message(STATUS "BUILD_TESTING = ${BUILD_TESTING}")
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+message(STATUS "BUILD_TESTING = ${BUILD_TESTING}")
+
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(libremidi REQUIRED)
 
 add_subdirectory(src)
 

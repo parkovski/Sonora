@@ -1,7 +1,8 @@
 set(SOURCES
   dr_libs/dr_libs.c
   miniaudio/miniaudio.c
-  wave.c
+  startup.cpp
+  wave.cpp
 )
 
 add_executable(sonora nethost/host.cpp)
@@ -16,8 +17,13 @@ file(COPY
 )
 
 add_library(sonoradll SHARED ${SOURCES})
-target_compile_definitions(sonoradll PUBLIC -DSONORA_DLL)
 set_target_properties(sonoradll PROPERTIES OUTPUT_NAME Sonora.Native)
+target_compile_definitions(sonoradll PRIVATE SONORA_DLL SPDLOG_FMT_EXTERNAL)
+target_link_libraries(sonoradll PRIVATE
+  fmt::fmt
+  spdlog::spdlog
+  libremidi
+)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Mm][Dd]64" OR
     CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86_64")
