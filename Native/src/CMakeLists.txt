@@ -1,5 +1,6 @@
 set(SOURCES
   dr_libs/dr_libs.c
+  log.cpp
   miniaudio/miniaudio.c
   startup.cpp
   wave.cpp
