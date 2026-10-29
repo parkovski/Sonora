@@ -6,15 +6,26 @@ using Sonora.Models;
 namespace Sonora.Controls;
 
 public class WaveControl : Control {
-    public static readonly StyledProperty<Pen> PenProperty =
-        AvaloniaProperty.Register<WaveControl, Pen>(
-            nameof(Pen),
-            defaultValue: new Pen(Brushes.Green)
+    public static readonly StyledProperty<IBrush?> BackgroundProperty =
+        AvaloniaProperty.Register<WaveControl, IBrush?>(
+            nameof(Background),
+            defaultValue: null
         );
 
-    Pen Pen {
-        get => GetValue(PenProperty);
-        set => SetValue(PenProperty, value);
+    IBrush? Background {
+        get => GetValue(BackgroundProperty);
+        set => SetValue(BackgroundProperty, value);
+    }
+
+    public static readonly StyledProperty<IBrush> ForegroundProperty =
+        AvaloniaProperty.Register<WaveControl, IBrush>(
+            nameof(Foreground),
+            defaultValue: Brushes.Green
+        );
+
+    IBrush Foreground {
+        get => GetValue(ForegroundProperty);
+        set => SetValue(ForegroundProperty, value);
     }
 
     public static readonly DirectProperty<WaveControl, Wave?> WaveProperty =
@@ -32,7 +43,8 @@ public class WaveControl : Control {
     }
 
     static WaveControl() {
-        AffectsRender<WaveControl>(PenProperty);
+        AffectsRender<WaveControl>(BackgroundProperty);
+        AffectsRender<WaveControl>(ForegroundProperty);
         AffectsRender<WaveControl>(WaveProperty);
     }
 
@@ -44,7 +56,8 @@ public class WaveControl : Control {
             new Rect(4, 4, Bounds.Width - 8, Bounds.Height - 8),
             5
         );
-        context.DrawRectangle(null, Pen, area);
+        var pen = new Pen(Foreground);
+        context.DrawRectangle(Background, pen, area);
 
         if (Wave is null) {
             return;
@@ -59,7 +72,7 @@ public class WaveControl : Control {
         for (double x1 = 1; x1 < Bounds.Width - margin * 2; ++x1) {
             ulong frame = (ulong)(x1 * stride);
             double y1 = (1 - Wave[frame * Wave.Channels]) * mul + margin;
-            context.DrawLine(Pen, new Point(x0 + margin, y0),
+            context.DrawLine(pen, new Point(x0 + margin, y0),
                              new Point(x1 + margin, y1));
             x0 = x1;
             y0 = y1;
