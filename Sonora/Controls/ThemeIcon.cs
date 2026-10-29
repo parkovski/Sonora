@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using IOPath = System.IO.Path;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -17,10 +18,24 @@ public class ThemeIcon : UserControl {
         set => SetValue(PathProperty, value);
     }
 
-    private string? _currentVariant;
+    private static ThemeVariant _currentVariant;
+
+    private static HashSet<ThemeIcon> _activeIcons;
 
     static ThemeIcon() {
         AffectsRender<ThemeIcon>(PathProperty);
+
+        _currentVariant = Application.Current!.ActualThemeVariant;
+        _activeIcons = new();
+        Application.Current!.ActualThemeVariantChanged += (s, e) => {
+            if (_currentVariant == Application.Current!.ActualThemeVariant) {
+                return;
+            }
+            _currentVariant = Application.Current!.ActualThemeVariant;
+            foreach (var icon in _activeIcons) {
+                icon.SetImageSource(icon.GetImageVariant());
+            }
+        };
     }
 
     public ThemeIcon() {
@@ -30,22 +45,21 @@ public class ThemeIcon : UserControl {
                 SetImageSource(GetImageVariant());
             }
         };
-        Application.Current!.ActualThemeVariantChanged += (s, e) => {
-            SetImageSource(GetImageVariant());
-        };
+        _activeIcons.Add(this);
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e) {
+        base.OnDetachedFromVisualTree(e);
+        _activeIcons.Remove(this);
     }
 
     private void SetImageSource(string source) {
-        if (_currentVariant == source) {
-            return;
-        }
-        _currentVariant = source;
         var stream = AssetLoader.Open(new Uri(source));
         ((Image)this.Content!).Source = new Bitmap(stream);
     }
 
     private string GetImageVariant() {
-        if (Application.Current!.ActualThemeVariant == ThemeVariant.Dark) {
+        if (_currentVariant == ThemeVariant.Dark) {
             return GetWhiteVariant();
         }
         return Path;
