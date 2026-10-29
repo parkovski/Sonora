@@ -4,8 +4,17 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #ifdef _WIN32
-#define ATTACH_PARENT_PROCESS ((unsigned long)-1)
-extern "C" int __stdcall AttachConsole(unsigned long dwProcessId);
+#define STD_INPUT_HANDLE ((unsigned long)-10)
+#define STD_OUTPUT_HANDLE ((unsigned long)-11)
+#define STD_ERROR_HANDLE ((unsigned long)-12)
+#define FILE_TYPE_CHAR 2
+extern "C" void * __stdcall GetStdHandle(unsigned long n);
+extern "C" unsigned long __stdcall GetFileType(void *handle);
+#else
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
+#define STDERR_FILENO 2
+extern "C" int isatty(int fd);
 #endif
 
 namespace sonora::log {
@@ -21,9 +30,18 @@ SNRAPI SNREXPORT void SnrStartup() {
   log::g_outLogger->set_level(spdlog::level::trace);
   log::g_errLogger->set_level(spdlog::level::warn);
 
+  if (
 #ifdef _WIN32
-  AttachConsole(ATTACH_PARENT_PROCESS);
+    GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == FILE_TYPE_CHAR
+    && GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == FILE_TYPE_CHAR
+#else
+    isatty(STDOUT_FILENO) && isatty(STDERR_FILENO)
 #endif
+  ) {
+    spdlog::set_pattern("[%H:%M:%S.%e] %^%l:%$ %v");
+  } else {
+    spdlog::set_pattern("[%H:%M:%S.%e] %l: %v");
+  }
 
   log::info("Sonora.Native initialized.");
 }
