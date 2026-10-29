@@ -27,7 +27,7 @@
         <suki:SukiSideMenu.Items>
             <suki:SukiSideMenuItem Header="Wave Viewer">
                 <suki:SukiSideMenuItem.Icon>
-                    <Image Source="/Assets/wave-saw-tool.png"/>
+                    <ctrl:ThemeIcon Path="avares://Sonora/Assets/wave-saw-tool.png"/>
                 </suki:SukiSideMenuItem.Icon>
                 <suki:SukiSideMenuItem.PageContent>
                     <Grid ColumnDefinitions="*,4,2*">
@@ -41,7 +41,7 @@
             </suki:SukiSideMenuItem>
             <suki:SukiSideMenuItem Header="MIDI Settings">
                 <suki:SukiSideMenuItem.Icon>
-                    <Image Source="/Assets/piano.png"/>
+                    <ctrl:ThemeIcon Path="avares://Sonora/Assets/piano.png"/>
                 </suki:SukiSideMenuItem.Icon>
                 <suki:SukiSideMenuItem.PageContent>
                     <TextBlock>Hello world</TextBlock>
