@@ -5,7 +5,7 @@ using Sonora.Models;
 
 namespace Sonora.Controls;
 
-public partial class WaveControl : Control {
+public class WaveControl : Control {
     public static readonly StyledProperty<Pen> PenProperty =
         AvaloniaProperty.Register<WaveControl, Pen>(
             nameof(Pen),
@@ -37,7 +37,6 @@ public partial class WaveControl : Control {
     }
 
     public WaveControl() {
-        InitializeComponent();
     }
 
     public override void Render(DrawingContext context) {
