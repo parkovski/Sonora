@@ -6,13 +6,18 @@ using System.Runtime.InteropServices;
 
 namespace Sonora;
 
-sealed class Program
+sealed partial class Program
 {
+    [LibraryImport("Kernel32")]
+    [return:MarshalAs(UnmanagedType.Bool)]
+    private static partial bool AttachConsole(int processId);
+
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args) {
+        AttachConsole(-1);
         SnrStartup();
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
