@@ -4,6 +4,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #ifdef _WIN32
+#include <winrt/base.h>
 #define STD_INPUT_HANDLE ((unsigned long)-10)
 #define STD_OUTPUT_HANDLE ((unsigned long)-11)
 #define STD_ERROR_HANDLE ((unsigned long)-12)
@@ -25,6 +26,10 @@ namespace sonora::log {
 using namespace sonora;
 
 SNRAPI SNREXPORT void SnrStartup() {
+#ifdef _WIN32
+  winrt::init_apartment();
+#endif
+
   log::g_outLogger = spdlog::stdout_color_mt("sonora.out");
   log::g_errLogger = spdlog::stderr_color_mt("sonora.err");
   log::g_outLogger->set_level(spdlog::level::trace);
@@ -33,14 +38,25 @@ SNRAPI SNREXPORT void SnrStartup() {
   if (
 #ifdef _WIN32
     GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == FILE_TYPE_CHAR
-    && GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == FILE_TYPE_CHAR
 #else
-    isatty(STDOUT_FILENO) && isatty(STDERR_FILENO)
+    isatty(STDOUT_FILENO)
 #endif
   ) {
-    spdlog::set_pattern("[%H:%M:%S.%e] %^%l:%$ %v");
+    log::g_outLogger->set_pattern("[%H:%M:%S.%e] %^%l:%$ %v");
   } else {
-    spdlog::set_pattern("[%H:%M:%S.%e] %l: %v");
+    log::g_outLogger->set_pattern("[%H:%M:%S.%e] %l: %v");
+  }
+
+  if (
+#ifdef _WIN32
+    GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == FILE_TYPE_CHAR
+#else
+    isatty(STDERR_FILENO)
+#endif
+  ) {
+    log::g_errLogger->set_pattern("[%H:%M:%S.%e] %^%l:%$ %v");
+  } else {
+    log::g_errLogger->set_pattern("[%H:%M:%S.%e] %l: %v");
   }
 
   log::info("Sonora.Native initialized.");
