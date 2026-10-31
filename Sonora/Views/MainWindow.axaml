@@ -11,7 +11,7 @@
                  x:Class="Sonora.Views.MainWindow"
                  x:DataType="vm:MainViewModel"
                  BackgroundStyle="GradientSoft"
-                 Icon="/Assets/saguaro.ico"
+                 Icon="avares://Sonora/Assets/saguaro.ico"
                  Title="Sonora">
 
     <Design.DataContext>
@@ -23,6 +23,9 @@
         <conv:PathToWaveConverter x:Key="WaveConverter"/>
     </Control.Resources>
 
+    <suki:SukiWindow.LogoContent>
+        <Image Source="avares://Sonora/Assets/saguaro-icon.png" Width="20" Height="20"/>
+    </suki:SukiWindow.LogoContent>
     <suki:SukiSideMenu>
         <suki:SukiSideMenu.Items>
             <suki:SukiSideMenuItem Header="Wave Viewer">
