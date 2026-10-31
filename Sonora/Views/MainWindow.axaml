@@ -44,7 +44,16 @@
                     <ctrl:ThemeIcon Path="avares://Sonora/Assets/piano.png"/>
                 </suki:SukiSideMenuItem.Icon>
                 <suki:SukiSideMenuItem.PageContent>
-                    <TextBlock>Hello world</TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock>MIDI Inputs</TextBlock>
+                            <ListBox x:Name="midiInListBox"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock>MIDI Outputs</TextBlock>
+                            <ListBox x:Name="midiOutListBox"/>
+                        </StackPanel>
+                    </StackPanel>
                 </suki:SukiSideMenuItem.PageContent>
             </suki:SukiSideMenuItem>
         </suki:SukiSideMenu.Items>

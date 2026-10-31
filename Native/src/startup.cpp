@@ -26,10 +26,6 @@ namespace sonora::log {
 using namespace sonora;
 
 SNRAPI SNREXPORT void SnrStartup() {
-#ifdef _WIN32
-  winrt::init_apartment();
-#endif
-
   log::g_outLogger = spdlog::stdout_color_mt("sonora.out");
   log::g_errLogger = spdlog::stderr_color_mt("sonora.err");
   log::g_outLogger->set_level(spdlog::level::trace);

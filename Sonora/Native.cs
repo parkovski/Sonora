@@ -2,6 +2,22 @@ using System.Runtime.InteropServices;
 
 namespace Sonora;
 
+public enum MidiDir {
+    In,
+    Out,
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public class MidiPortInfo {
+    [MarshalAs(UnmanagedType.LPUTF8Str)]
+    public required string Name;
+    [MarshalAs(UnmanagedType.LPUTF8Str)]
+    public required string Id;
+    public ulong Number;
+    public nint Port;
+    public MidiDir Dir;
+}
+
 public static partial class Native {
 #region Startup / Shutdown
     [LibraryImport("Sonora.Native")]
@@ -57,5 +73,23 @@ public static partial class Native {
         [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] float[] data,
         ulong size
     );
+#endregion
+
+#region MIDI
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void MidiPortAdded(nint receiver, [In] MidiPortInfo info);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void MidiPortRemoved(nint receiver, [In] MidiPortInfo info);
+
+    [LibraryImport("Sonora.Native")]
+    public static partial nint SnrMidiStateNew(
+        nint receiver,
+        MidiPortAdded added,
+        MidiPortRemoved removed
+    );
+
+    [LibraryImport("Sonora.Native")]
+    public static partial nint SnrMidiStateFree(nint state);
 #endregion
 }
