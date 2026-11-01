@@ -10,11 +10,11 @@ set(SOURCES
 add_executable(sonora nethost/host.cpp)
 set_target_properties(sonora PROPERTIES OUTPUT_NAME Sonora)
 target_link_directories(sonora PRIVATE
-  "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.13/runtimes/win-x64/native"
+  "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.14/runtimes/win-x64/native"
 )
 target_link_libraries(sonora PRIVATE nethost)
 file(COPY
-  "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.13/runtimes/win-x64/native/nethost.dll"
+  "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.14/runtimes/win-x64/native/nethost.dll"
   DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
