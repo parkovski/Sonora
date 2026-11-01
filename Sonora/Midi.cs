@@ -61,4 +61,8 @@ public class MidiListener : IDisposable {
     }
 
     ~MidiListener() => Dispose(false);
+
+    public void Listen() {
+        SnrMidiStateListen(_midiState);
+    }
 }

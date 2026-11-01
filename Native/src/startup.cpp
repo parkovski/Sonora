@@ -38,9 +38,9 @@ SNRAPI SNREXPORT void SnrStartup() {
     isatty(STDOUT_FILENO)
 #endif
   ) {
-    log::g_outLogger->set_pattern("[%H:%M:%S.%e] %^%l:%$ %v");
+    log::g_outLogger->set_pattern("[%H:%M:%S.%e] [#%t] %^%l:%$ %v");
   } else {
-    log::g_outLogger->set_pattern("[%H:%M:%S.%e] %l: %v");
+    log::g_outLogger->set_pattern("[%H:%M:%S.%e] [#%t] %l: %v");
   }
 
   if (
@@ -50,9 +50,9 @@ SNRAPI SNREXPORT void SnrStartup() {
     isatty(STDERR_FILENO)
 #endif
   ) {
-    log::g_errLogger->set_pattern("[%H:%M:%S.%e] %^%l:%$ %v");
+    log::g_errLogger->set_pattern("[%H:%M:%S.%e] [#%t] %^%l:%$ %v");
   } else {
-    log::g_errLogger->set_pattern("[%H:%M:%S.%e] %l: %v");
+    log::g_errLogger->set_pattern("[%H:%M:%S.%e] [#%t] %l: %v");
   }
 
   log::info("Sonora.Native initialized.");

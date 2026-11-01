@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <cstring>
 #include <libremidi/api-c.h>
+#include <libremidi/backends/winmidi/config.hpp>
+#include <libremidi/configurations.hpp>
 #include <libremidi/libremidi.hpp>
 #include <libremidi/observer_configuration.hpp>
 #include <libremidi/port_information.hpp>
@@ -170,7 +172,7 @@ struct MidiState {
     : receiver{receiver}
     , port_added{port_added}
     , port_removed{port_removed}
-    , observer{get_observer_config()}
+    , observer{}
   {}
 };
 
@@ -188,4 +190,9 @@ SNRAPI SNREXPORT MidiState *SnrMidiStateNew(
 
 SNRAPI SNREXPORT void SnrMidiStateFree(MidiState *state) {
   delete state;
+}
+
+SNRAPI SNREXPORT void SnrMidiStateListen(MidiState *state) {
+  libremidi::observer_api_configuration api_config = libremidi::winuwp_observer_configuration{};
+  state->observer = libremidi::observer{state->get_observer_config(), api_config};
 }

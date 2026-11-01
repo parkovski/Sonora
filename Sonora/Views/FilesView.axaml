@@ -34,7 +34,7 @@
                     <StackPanel Orientation="Vertical"
                         Background="Transparent"
                         PointerPressed="OnPointerPressed">
-                        <ctrl:WaveControl Width="200" Height="100"
+                        <ctrl:WaveControl Width="140" Height="80"
                             Wave="{Binding, Converter={StaticResource WaveConverter}}"/>
                         <TextBlock Width="200" TextWrapping="Wrap"
                             Text="{Binding, Converter={StaticResource FileNameConverter}}"/>

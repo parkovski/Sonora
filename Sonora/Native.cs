@@ -91,5 +91,8 @@ public static partial class Native {
 
     [LibraryImport("Sonora.Native")]
     public static partial nint SnrMidiStateFree(nint state);
+
+    [LibraryImport("Sonora.Native")]
+    public static partial void SnrMidiStateListen(nint state);
 #endregion
 }
