@@ -1,8 +1,8 @@
 set(SOURCES
-  dr_libs/dr_libs.c
+  drlibs.c
   log.cpp
   midi.cpp
-  miniaudio/miniaudio.c
+  miniaudio.c
   startup.cpp
   wave.cpp
 )
@@ -60,6 +60,8 @@ file(COPY "${dotnet_link_dir}/${dotnet_nethost_dll}"
 add_library(sonoradll SHARED ${SOURCES})
 set_target_properties(sonoradll PROPERTIES OUTPUT_NAME Sonora.Native)
 target_compile_definitions(sonoradll PRIVATE SONORA_DLL SPDLOG_FMT_EXTERNAL)
+target_include_directories(sonoradll PRIVATE
+  ${DRLIBS_INCLUDE_DIRS} ${MINIAUDIO_INCLUDE_DIRS})
 target_link_libraries(sonoradll PRIVATE
   fmt::fmt
   spdlog::spdlog

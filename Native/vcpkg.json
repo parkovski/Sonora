@@ -4,17 +4,21 @@
   "version-string": "0.1-alpha",
   "builtin-baseline": "bf19794383e8fb95eba5aa553235bc8ec2271688",
   "dependencies": [
-    "libremidi",
     "fmt",
+    "libremidi",
+    "miniaudio",
     {
       "name": "spdlog",
-      "platform": "windows",
-      "features": ["wchar"]
+      "features": [
+        "wchar"
+      ],
+      "platform": "windows"
     },
     {
       "name": "spdlog",
       "platform": "!windows"
-    }
+    },
+    "drlibs"
   ],
   "features": {
     "test": {

@@ -27,6 +27,8 @@ message(STATUS "BUILD_TESTING = ${BUILD_TESTING}")
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(libremidi REQUIRED)
+find_path(DRLIBS_INCLUDE_DIRS "dr_flac.h")
+find_path(MINIAUDIO_INCLUDE_DIRS "miniaudio.h")
 
 add_subdirectory(src)
 
