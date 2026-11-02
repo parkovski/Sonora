@@ -7,14 +7,36 @@ set(SOURCES
   wave.cpp
 )
 
-add_executable(sonora nethost/host.cpp)
-set_target_properties(sonora PROPERTIES OUTPUT_NAME Sonora)
-target_link_directories(sonora PRIVATE
-  "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.14/runtimes/win-x64/native"
-)
-target_link_libraries(sonora PRIVATE nethost)
-file(COPY
-  "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/10.0.14/runtimes/win-x64/native/nethost.dll"
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Mm][Dd]64$" OR
+    CMAKE_SYSTEM_PROCESSOR MATCHES "^[Xx]86_64$")
+  set(DOTNET_ARCH x64)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Rr][Mm]64$" OR
+    CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Aa][Rr][Cc][Hh]64$")
+  set(DOTNET_ARCH arm64)
+endif()
+
+message(STATUS "Compiling for ${DOTNET_ARCH}")
+
+add_executable(sonorahost nethost/host.cpp)
+set_target_properties(sonorahost PROPERTIES OUTPUT_NAME Sonora.Host)
+if(DOTNET_ARCH STREQUAL x64)
+  file(GLOB dotnet_link_dir LIST_DIRECTORIES TRUE
+    "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/*/runtimes/win-x64/native")
+elseif(DOTNET_ARCH STREQUAL arm64)
+  file(GLOB dotnet_link_dir LIST_DIRECTORIES TRUE
+    "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-arm64/*/runtimes/win-arm64/native")
+else()
+  message(FATAL_ERROR "Unknown target architecture")
+endif()
+
+if(dotnet_link_dir)
+  message(STATUS "Found .NET runtime in \"${dotnet_link_dir}\"")
+else()
+  message(FATAL_ERROR "Could not find .NET runtime")
+endif()
+target_link_directories(sonorahost PRIVATE ${dotnet_link_dir})
+target_link_libraries(sonorahost PRIVATE nethost)
+file(COPY "${dotnet_link_dir}/nethost.dll"
   DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
@@ -26,16 +48,6 @@ target_link_libraries(sonoradll PRIVATE
   spdlog::spdlog
   libremidi
 )
-
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Mm][Dd]64" OR
-    CMAKE_SYSTEM_PROCESSOR MATCHES "[Xx]86_64")
-  set(DOTNET_ARCH x64)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Rr][Mm]64" OR
-    CMAKE_SYSTEM_PROCESSOR MATCHES "[Aa][Aa][Rr][Cc][Hh]64")
-  set(DOTNET_ARCH arm64)
-endif()
-
-message(STATUS "Compiling for ${DOTNET_ARCH}.")
 
 if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE MATCHES "Deb")
   add_custom_command(TARGET sonoradll POST_BUILD
