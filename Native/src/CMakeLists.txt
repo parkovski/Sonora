@@ -19,15 +19,32 @@ message(STATUS "Compiling for ${DOTNET_ARCH}")
 
 add_executable(sonorahost nethost/host.cpp)
 set_target_properties(sonorahost PROPERTIES OUTPUT_NAME Sonora.Host)
-if(DOTNET_ARCH STREQUAL x64)
-  file(GLOB dotnet_link_dir LIST_DIRECTORIES TRUE
-    "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/*/runtimes/win-x64/native")
-elseif(DOTNET_ARCH STREQUAL arm64)
-  file(GLOB dotnet_link_dir LIST_DIRECTORIES TRUE
-    "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-arm64/*/runtimes/win-arm64/native")
-else()
-  message(FATAL_ERROR "Unknown target architecture")
+if(WIN32)
+  set(dotnet_nethost_dll "nethost.dll")
+  set(sonora_native_dll "Sonora.Native.dll")
+  if(DOTNET_ARCH STREQUAL x64)
+    set(dotnet_glob "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-x64/*/runtimes/win-x64/native")
+  elseif(DOTNET_ARCH STREQUAL arm64)
+    set(dotnet_glob "C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Host.win-arm64/*/runtimes/win-arm64/native")
+  else()
+    message(FATAL_ERROR "Unsupported architecture")
+  endif()
+elseif(UNIX AND NOT APPLE)
+  set(dotnet_nethost_dll "libnethost.so")
+  set(sonora_native_dll "libSonora.Native.so")
+  if(DOTNET_ARCH STREQUAL x64)
+    set(dotnet_glob "/usr/share/dotnet/packs/Microsoft.NETCore.App.Host.arch-x64/*/runtimes/arch-x64/native")
+  elseif(DOTNET_ARCH STREQUAL arm64)
+    set(dotnet_glob "/usr/share/dotnet/packs/Microsoft.NETCore.App.Host.arch-arm64/*/runtimes/arch-arm64/native")
+  else()
+    message(FATAL_ERROR "Fill in .NET paths here")
+  endif()
+elseif(APPLE)
+  set(dotnet_nethost_dll "libnethost.dylib")
+  set(sonora_native_dll "libSonora.Native.dylib")
+  message(FATAL_ERROR "Fill in .NET paths here")
 endif()
+file(GLOB dotnet_link_dir LIST_DIRECTORIES TRUE ${dotnet_glob})
 
 if(dotnet_link_dir)
   message(STATUS "Found .NET runtime in \"${dotnet_link_dir}\"")
@@ -36,7 +53,7 @@ else()
 endif()
 target_link_directories(sonorahost PRIVATE ${dotnet_link_dir})
 target_link_libraries(sonorahost PRIVATE nethost)
-file(COPY "${dotnet_link_dir}/nethost.dll"
+file(COPY "${dotnet_link_dir}/${dotnet_nethost_dll}"
   DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
@@ -52,20 +69,11 @@ target_link_libraries(sonoradll PRIVATE
 if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE MATCHES "Deb")
   add_custom_command(TARGET sonoradll POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/bin/Sonora.Native.dll"
+    "${CMAKE_BINARY_DIR}/bin/${sonora_native_dll}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../Sonora/bin/Debug/net10.0")
-  add_custom_command(TARGET sonoradll POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/bin/Sonora.Native.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Sonora/bin/${DOTNET_ARCH}/Debug/net10.0")
 elseif(CMAKE_BUILD_TYPE MATCHES "Rel")
   add_custom_command(TARGET sonoradll POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/bin/Sonora.Native.dll"
+    "${CMAKE_BINARY_DIR}/bin/${sonora_native_dll}"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../Sonora/bin/Release/net10.0")
-  add_custom_command(TARGET sonoradll POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/bin/Sonora.Native.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Sonora/bin/${DOTNET_ARCH}/Release/net10.0")
 endif()
-
