@@ -1,11 +1,16 @@
-
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#ifndef __CORECLR_DELEGATES_H__
-#define __CORECLR_DELEGATES_H__
+#ifndef HAVE_CORECLR_DELEGATES_H
+#define HAVE_CORECLR_DELEGATES_H
 
+#include <stddef.h>
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #if defined(_WIN32)
     #define CORECLR_DELEGATE_CALLTYPE __stdcall
@@ -20,6 +25,15 @@
 #endif
 
 #define UNMANAGEDCALLERSONLY_METHOD ((const char_t*)-1)
+
+#define CORECLR_LOAD_CONTEXT_ISOLATED ((void*)-1)
+
+// Keep in sync with ComponentLoadContextManager.LoadContext in ComponentLoadContextManager.cs.
+struct coreclr_load_context
+{
+    size_t size;                /* Size of this structure for versioning */
+    const char_t *identifier;   /* Load context identifier */
+};
 
 // Signature of delegate returned by coreclr_delegate_type::load_assembly_and_get_function_pointer
 typedef int (CORECLR_DELEGATE_CALLTYPE *load_assembly_and_get_function_pointer_fn)(
@@ -41,13 +55,13 @@ typedef int (CORECLR_DELEGATE_CALLTYPE *get_function_pointer_fn)(
     const char_t *delegate_type_name /* Assembly qualified delegate type name or null,
                                         or UNMANAGEDCALLERSONLY_METHOD if the method is marked with
                                         the UnmanagedCallersOnlyAttribute. */,
-    void         *load_context       /* Extensibility parameter (currently unused and must be 0) */,
+    void         *load_context       /* Assembly load context specification or null for the default context */,
     void         *reserved           /* Extensibility parameter (currently unused and must be 0) */,
     /*out*/ void **delegate          /* Pointer where to store the function pointer result */);
 
 typedef int (CORECLR_DELEGATE_CALLTYPE *load_assembly_fn)(
     const char_t *assembly_path     /* Fully qualified path to assembly */,
-    void         *load_context      /* Extensibility parameter (currently unused and must be 0) */,
+    void         *load_context      /* Assembly load context specification or null for the default context */,
     void         *reserved          /* Extensibility parameter (currently unused and must be 0) */);
 
 typedef int (CORECLR_DELEGATE_CALLTYPE *load_assembly_bytes_fn)(
@@ -55,7 +69,11 @@ typedef int (CORECLR_DELEGATE_CALLTYPE *load_assembly_bytes_fn)(
     size_t     assembly_bytes_len   /* Byte length of the assembly to load */,
     const void *symbols_bytes       /* Optional. Bytes of the symbols for the assembly */,
     size_t     symbols_bytes_len    /* Optional. Byte length of the symbols for the assembly */,
-    void       *load_context        /* Extensibility parameter (currently unused and must be 0) */,
+    void       *load_context        /* Assembly load context specification or null for the default context */,
     void       *reserved            /* Extensibility parameter (currently unused and must be 0) */);
 
-#endif // __CORECLR_DELEGATES_H__
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // HAVE_CORECLR_DELEGATES_H
