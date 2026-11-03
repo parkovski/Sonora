@@ -18,6 +18,13 @@ public class MidiPortInfo {
     public MidiDir Dir;
 }
 
+[StructLayout(LayoutKind.Sequential)]
+public struct UMP {
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+    public uint[] Data;
+    public long Timestamp;
+}
+
 public static partial class Native {
 #region Startup / Shutdown
     [LibraryImport("Sonora.Native")]

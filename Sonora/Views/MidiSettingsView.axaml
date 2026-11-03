@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Sonora.ViewModels"
+             xmlns:ctrl="using:Sonora.Controls"
+             xmlns:conv="using:Sonora.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sonora.Views.MidiSettingsView"
+             x:DataType="vm:MidiSettingsViewModel">
+    <Design.DataContext>
+        <vm:MidiSettingsViewModel/>
+    </Design.DataContext>
+    <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Vertical">
+            <TextBlock>MIDI Inputs</TextBlock>
+            <ListBox x:Name="midiInListBox" SelectionMode="Multiple,Toggle"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock>MIDI Outputs</TextBlock>
+            <ListBox x:Name="midiOutListBox" SelectionMode="Multiple,Toggle"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

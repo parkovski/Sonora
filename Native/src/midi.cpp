@@ -2,12 +2,10 @@
 #include "log.h"
 #include <cstddef>
 #include <cstring>
-#include <libremidi/api-c.h>
-#include <libremidi/backends/winmidi/config.hpp>
-#include <libremidi/configurations.hpp>
+#include <functional>
+#include <unordered_map>
+#include <mutex>
 #include <libremidi/libremidi.hpp>
-#include <libremidi/observer_configuration.hpp>
-#include <libremidi/port_information.hpp>
 
 namespace sonora {
 
@@ -137,31 +135,79 @@ struct MidiPortInfo {
   }
 };
 
+struct StringHash {
+  using is_transparent = void;
+
+  size_t operator()(const char *s) const noexcept {
+    return std::hash<std::string_view>{}(std::string_view{s});
+  }
+
+  size_t operator()(std::string_view s) const noexcept {
+    return std::hash<std::string_view>{}(s);
+  }
+
+  size_t operator()(const std::string &s) const noexcept {
+    return std::hash<std::string>{}(s);
+  }
+};
+
 struct MidiState {
   void *receiver;
   void (*port_added)(void *receiver, const MidiPortInfo &info);
   void (*port_removed)(void *receiver, const MidiPortInfo &info);
   libremidi::observer observer;
+  libremidi::midi_in midi_in;
+  libremidi::midi_out midi_out;
+  std::mutex _mutex;
+  std::unordered_map<std::string, libremidi::input_port,
+                     StringHash, std::equal_to<>> _inputs;
+  std::unordered_map<std::string, libremidi::output_port,
+                     StringHash, std::equal_to<>> _outputs;
 
   libremidi::observer_configuration get_observer_config() {
     return {
       .input_added = [this] (const libremidi::input_port &port) {
+        std::lock_guard lock{_mutex};
         MidiPortInfo info{port, MidiDir::In};
-        port_added(receiver, info);
+        _inputs.emplace(info.id, port);
+        if (port_added) {
+          port_added(receiver, info);
+        }
       },
       .input_removed = [this] (const libremidi::input_port &port) {
+        std::lock_guard lock{_mutex};
         MidiPortInfo info{port, MidiDir::In};
-        port_removed(receiver, info);
+        auto it = _inputs.find(info.id);
+        if (it != _inputs.end()) {
+          _inputs.erase(it);
+        }
+        if (port_removed) {
+          port_removed(receiver, info);
+        }
       },
       .output_added = [this] (const libremidi::output_port &port) {
+        std::lock_guard lock{_mutex};
         MidiPortInfo info{port, MidiDir::Out};
-        port_added(receiver, info);
+        _outputs.emplace(info.id, port);
+        if (port_added) {
+          port_added(receiver, info);
+        }
       },
       .output_removed = [this] (const libremidi::output_port &port) {
+        std::lock_guard lock{_mutex};
         MidiPortInfo info{port, MidiDir::Out};
-        port_removed(receiver, info);
+        auto it = _outputs.find(info.id);
+        if (it != _outputs.end()) {
+          _outputs.erase(it);
+        }
+        if (port_removed) {
+          port_removed(receiver, info);
+        }
       }
     };
+  }
+
+  void midi_in_callback(const libremidi::ump &message) {
   }
 
   explicit MidiState(
@@ -173,6 +219,11 @@ struct MidiState {
     , port_added{port_added}
     , port_removed{port_removed}
     , observer{}
+    , midi_in{libremidi::ump_input_configuration{
+      .on_message = std::bind(&MidiState::midi_in_callback, this,
+                              std::placeholders::_1),
+    }}
+    , midi_out{}
   {}
 };
 
@@ -195,4 +246,8 @@ SNRAPI SNREXPORT void SnrMidiStateFree(MidiState *state) {
 SNRAPI SNREXPORT void SnrMidiStateListen(MidiState *state) {
   libremidi::observer_api_configuration api_config = libremidi::winuwp_observer_configuration{};
   state->observer = libremidi::observer{state->get_observer_config(), api_config};
+}
+
+SNRAPI SNREXPORT void SnrMidiStateOpenPort(MidiState *state,
+                                           const MidiPortInfo &info) {
 }
