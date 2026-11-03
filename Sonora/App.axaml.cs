@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Sonora.ViewModels;
 using Sonora.Views;
+using AvaDevTools;
 
 namespace Sonora;
 
@@ -11,6 +12,10 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+
+#if DEBUG
+        this.AttachAvaDevTools();
+#endif
     }
 
     public override void OnFrameworkInitializationCompleted()
