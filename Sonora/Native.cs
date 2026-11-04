@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace Sonora;
 
-public enum MidiDir {
+public enum MidiDirection {
     In,
     Out,
 }
@@ -10,12 +10,37 @@ public enum MidiDir {
 [StructLayout(LayoutKind.Sequential)]
 public class MidiPortInfo {
     [MarshalAs(UnmanagedType.LPUTF8Str)]
-    public required string Name;
+    public required string _name;
     [MarshalAs(UnmanagedType.LPUTF8Str)]
-    public required string Id;
-    public ulong Number;
-    public nint Port;
-    public MidiDir Dir;
+    public required string _id;
+    public ulong _number;
+    public nint _port;
+    public MidiDirection _direction;
+
+    public string Name {
+        get => _name;
+        set => _name = value;
+    }
+
+    public string Id {
+        get => _id;
+        set => _id = value;
+    }
+
+    public ulong Number {
+        get => _number;
+        set => _number = value;
+    }
+
+    public nint Port {
+        get => _port;
+        set => _port = value;
+    }
+
+    public MidiDirection Direction {
+        get => _direction;
+        set => _direction = value;
+    }
 }
 
 [StructLayout(LayoutKind.Sequential)]

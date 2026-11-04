@@ -6,10 +6,11 @@
 #include <unordered_map>
 #include <mutex>
 #include <libremidi/libremidi.hpp>
+#include <libremidi/backends/winmidi/config.hpp>
 
 namespace sonora {
 
-enum class MidiDir {
+enum class MidiDirection {
   In,
   Out,
 };
@@ -19,19 +20,19 @@ struct MidiPortInfo {
   char *id;
   uint64_t number;
   const libremidi::port_information *port;
-  MidiDir dir;
+  MidiDirection direction;
 
   explicit MidiPortInfo(const libremidi::port_information &port_info,
-                        MidiDir dir)
-    : name{new char[port_info.display_name.length() + 1]}
+                        MidiDirection direction)
+    : name{new char[port_info.port_name.length() + 1]}
     , id{nullptr}
     , number{port_info.port}
     , port{new libremidi::port_information{port_info}}
-    , dir{dir}
+    , direction{direction}
   {
-    memcpy(name, port_info.display_name.data(),
-           port_info.display_name.length());
-    name[port_info.display_name.length()] = 0;
+    memcpy(name, port_info.port_name.data(),
+           port_info.port_name.length());
+    name[port_info.port_name.length()] = 0;
 
     switch (port_info.api) {
     case ALSA_SEQ:
@@ -125,7 +126,7 @@ struct MidiPortInfo {
     }
 
     log::trace("Created MIDI port info for {} {} ({}).",
-               dir == MidiDir::In ? "input" : "output", name, id);
+               direction == MidiDirection::In ? "input" : "output", name, id);
   }
 
   ~MidiPortInfo() {
@@ -168,7 +169,7 @@ struct MidiState {
     return {
       .input_added = [this] (const libremidi::input_port &port) {
         std::lock_guard lock{_mutex};
-        MidiPortInfo info{port, MidiDir::In};
+        MidiPortInfo info{port, MidiDirection::In};
         _inputs.emplace(info.id, port);
         if (port_added) {
           port_added(receiver, info);
@@ -176,7 +177,7 @@ struct MidiState {
       },
       .input_removed = [this] (const libremidi::input_port &port) {
         std::lock_guard lock{_mutex};
-        MidiPortInfo info{port, MidiDir::In};
+        MidiPortInfo info{port, MidiDirection::In};
         auto it = _inputs.find(info.id);
         if (it != _inputs.end()) {
           _inputs.erase(it);
@@ -187,7 +188,7 @@ struct MidiState {
       },
       .output_added = [this] (const libremidi::output_port &port) {
         std::lock_guard lock{_mutex};
-        MidiPortInfo info{port, MidiDir::Out};
+        MidiPortInfo info{port, MidiDirection::Out};
         _outputs.emplace(info.id, port);
         if (port_added) {
           port_added(receiver, info);
@@ -195,7 +196,7 @@ struct MidiState {
       },
       .output_removed = [this] (const libremidi::output_port &port) {
         std::lock_guard lock{_mutex};
-        MidiPortInfo info{port, MidiDir::Out};
+        MidiPortInfo info{port, MidiDirection::Out};
         auto it = _outputs.find(info.id);
         if (it != _outputs.end()) {
           _outputs.erase(it);
@@ -244,8 +245,12 @@ SNRAPI SNREXPORT void SnrMidiStateFree(MidiState *state) {
 }
 
 SNRAPI SNREXPORT void SnrMidiStateListen(MidiState *state) {
-  libremidi::observer_api_configuration api_config = libremidi::winuwp_observer_configuration{};
-  state->observer = libremidi::observer{state->get_observer_config(), api_config};
+  libremidi::observer_api_configuration api_config =
+    libremidi::midi1::default_api();
+  state->observer = libremidi::observer{
+    state->get_observer_config(),
+    api_config
+  };
 }
 
 SNRAPI SNREXPORT void SnrMidiStateOpenPort(MidiState *state,

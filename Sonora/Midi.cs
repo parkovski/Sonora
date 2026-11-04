@@ -3,10 +3,7 @@ using System.Runtime.InteropServices;
 namespace Sonora;
 
 public class MidiPortChangedEventArgs : EventArgs {
-    public required string Name { get; set; }
-    public required string Id { get; set; }
-    public required ulong Number { get; set; }
-    public required MidiDir Direction { get; set; }
+    public required MidiPortInfo Info { get; set; }
 }
 
 public class MidiListener : IDisposable {
@@ -21,10 +18,7 @@ public class MidiListener : IDisposable {
         GCHandle handle = GCHandle.FromIntPtr(receiver);
         MidiListener self = (MidiListener)handle.Target!;
         self.PortAdded?.Invoke(self, new MidiPortChangedEventArgs {
-            Name = info.Name,
-            Id = info.Id,
-            Number = info.Number,
-            Direction = info.Dir,
+            Info = info,
         });
     }
 
@@ -32,10 +26,7 @@ public class MidiListener : IDisposable {
         GCHandle handle = GCHandle.FromIntPtr(receiver);
         MidiListener self = (MidiListener)handle.Target!;
         self.PortRemoved?.Invoke(self, new MidiPortChangedEventArgs {
-            Name = info.Name,
-            Id = info.Id,
-            Number = info.Number,
-            Direction = info.Dir,
+            Info = info,
         });
     }
 

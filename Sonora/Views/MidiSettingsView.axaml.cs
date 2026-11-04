@@ -10,9 +10,9 @@ public partial class MidiSettingsView : UserControl {
     public MidiSettingsView() {
         InitializeComponent();
 
-        var inputs = new ObservableCollection<string>();
+        var inputs = new ObservableCollection<MidiPortInfo>();
         midiInListBox.ItemsSource = inputs;
-        var outputs = new ObservableCollection<string>();
+        var outputs = new ObservableCollection<MidiPortInfo>();
         midiOutListBox.ItemsSource = outputs;
 
         _listener = new MidiListener();
@@ -20,18 +20,28 @@ public partial class MidiSettingsView : UserControl {
             // Don't need to lock because the C++ side has locked a mutex
             // already. This is only ok as long as we only touch inputs/outputs
             // when C++ is holding the lock.
-            if (e.Direction == MidiDir.In) {
-                inputs.Add(e.Name);
+            if (e.Info.Direction == MidiDirection.In) {
+                inputs.Add(e.Info);
             } else {
-                outputs.Add(e.Name);
+                outputs.Add(e.Info);
             }
         };
 
         _listener.PortRemoved += (s, e) => {
-            if (e.Direction == MidiDir.In) {
-                inputs.Remove(e.Name);
+            if (e.Info.Direction == MidiDirection.In) {
+                for (int i = 0; i < inputs.Count; ++i) {
+                    if (inputs[i].Id == e.Info.Id) {
+                        inputs.RemoveAt(i);
+                        break;
+                    }
+                }
             } else {
-                outputs.Remove(e.Name);
+                for (int i = 0; i < outputs.Count; ++i) {
+                    if (outputs[i].Id == e.Info.Id) {
+                        outputs.RemoveAt(i);
+                        break;
+                    }
+                }
             }
         };
 
