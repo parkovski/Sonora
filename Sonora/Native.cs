@@ -126,5 +126,18 @@ public static partial class Native {
 
     [LibraryImport("Sonora.Native")]
     public static partial void SnrMidiStateListen(nint state);
+
+    [LibraryImport("Sonora.Native",
+                   StringMarshalling = StringMarshalling.Utf8)]
+    [return: MarshalAs(UnmanagedType.I1)]
+    public static partial bool SnrMidiStateOpenPort(
+        nint state, MidiDirection direction, string id
+    );
+
+    [LibraryImport("Sonora.Native",
+                   StringMarshalling = StringMarshalling.Utf8)]
+    public static partial void SnrMidiStateClosePort(
+        nint state, MidiDirection direction, string id
+    );
 #endregion
 }

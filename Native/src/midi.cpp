@@ -5,8 +5,17 @@
 #include <functional>
 #include <unordered_map>
 #include <mutex>
+#include <fmt/format.h>
 #include <libremidi/libremidi.hpp>
 #include <libremidi/backends/winmidi/config.hpp>
+
+template<>
+struct fmt::formatter<stdx::string_ref> : fmt::formatter<std::string_view> {
+  auto format(const stdx::string_ref &s, format_context &ctx) const {
+    return formatter<std::string_view>{}
+      .format(std::string_view{s.begin(), s.end()}, ctx);
+  }
+};
 
 namespace sonora {
 
@@ -153,17 +162,19 @@ struct StringHash {
 };
 
 struct MidiState {
-  void *receiver;
-  void (*port_added)(void *receiver, const MidiPortInfo &info);
-  void (*port_removed)(void *receiver, const MidiPortInfo &info);
-  libremidi::observer observer;
-  libremidi::midi_in midi_in;
-  libremidi::midi_out midi_out;
+  void *_receiver;
+  void (*_port_added)(void *receiver, const MidiPortInfo &info);
+  void (*_port_removed)(void *receiver, const MidiPortInfo &info);
+  libremidi::observer _observer;
   std::mutex _mutex;
   std::unordered_map<std::string, libremidi::input_port,
                      StringHash, std::equal_to<>> _inputs;
   std::unordered_map<std::string, libremidi::output_port,
                      StringHash, std::equal_to<>> _outputs;
+  std::unordered_map<std::string, libremidi::midi_in,
+                     StringHash, std::equal_to<>> _midi_ins;
+  std::unordered_map<std::string, libremidi::midi_out,
+                     StringHash, std::equal_to<>> _midi_outs;
 
   libremidi::observer_configuration get_observer_config() {
     return {
@@ -171,8 +182,8 @@ struct MidiState {
         std::lock_guard lock{_mutex};
         MidiPortInfo info{port, MidiDirection::In};
         _inputs.emplace(info.id, port);
-        if (port_added) {
-          port_added(receiver, info);
+        if (_port_added) {
+          _port_added(_receiver, info);
         }
       },
       .input_removed = [this] (const libremidi::input_port &port) {
@@ -182,16 +193,16 @@ struct MidiState {
         if (it != _inputs.end()) {
           _inputs.erase(it);
         }
-        if (port_removed) {
-          port_removed(receiver, info);
+        if (_port_removed) {
+          _port_removed(_receiver, info);
         }
       },
       .output_added = [this] (const libremidi::output_port &port) {
         std::lock_guard lock{_mutex};
         MidiPortInfo info{port, MidiDirection::Out};
         _outputs.emplace(info.id, port);
-        if (port_added) {
-          port_added(receiver, info);
+        if (_port_added) {
+          _port_added(_receiver, info);
         }
       },
       .output_removed = [this] (const libremidi::output_port &port) {
@@ -201,14 +212,64 @@ struct MidiState {
         if (it != _outputs.end()) {
           _outputs.erase(it);
         }
-        if (port_removed) {
-          port_removed(receiver, info);
+        if (_port_removed) {
+          _port_removed(_receiver, info);
         }
       }
     };
   }
 
-  void midi_in_callback(const libremidi::ump &message) {
+  void midi_in_callback(const libremidi::message &message) {
+    log::debug("message {}", message.bytes[0]);
+  }
+
+  bool open_port(MidiDirection direction, std::string_view id) {
+    std::lock_guard lock{_mutex};
+    if (direction == MidiDirection::In) {
+      auto it = _inputs.find(id);
+      if (it == _inputs.end()) {
+        return false;
+      }
+      auto err = _midi_ins.emplace(id, libremidi::input_configuration{
+        .on_message = std::bind(&MidiState::midi_in_callback, this,
+                                std::placeholders::_1),
+      }).first->second.open_port(it->second);
+      if (err.is_set()) {
+        log::error("midi_in: {}", err.message());
+        return false;
+      }
+    } else {
+      auto it = _outputs.find(id);
+      if (it == _outputs.end()) {
+        return false;
+      }
+      auto err = _midi_outs.emplace(id, libremidi::output_configuration{})
+        .first->second.open_port(it->second);
+      if (err.is_set()) {
+        log::error("midi_out: {}", err.message());
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void close_port(MidiDirection direction, std::string_view id) {
+    std::lock_guard lock{_mutex};
+    if (direction == MidiDirection::In) {
+      auto it = _midi_ins.find(id);
+      if (it == _midi_ins.end()) {
+        return;
+      }
+      it->second.close_port();
+      _midi_ins.erase(it);
+    } else {
+      auto it = _midi_outs.find(id);
+      if (it == _midi_outs.end()) {
+        return;
+      }
+      it->second.close_port();
+      _midi_outs.erase(it);
+    }
   }
 
   explicit MidiState(
@@ -216,15 +277,10 @@ struct MidiState {
     void (*port_added)(void *receiver, const MidiPortInfo &info),
     void (*port_removed)(void *receiver, const MidiPortInfo &info)
   )
-    : receiver{receiver}
-    , port_added{port_added}
-    , port_removed{port_removed}
-    , observer{}
-    , midi_in{libremidi::ump_input_configuration{
-      .on_message = std::bind(&MidiState::midi_in_callback, this,
-                              std::placeholders::_1),
-    }}
-    , midi_out{}
+    : _receiver{receiver}
+    , _port_added{port_added}
+    , _port_removed{port_removed}
+    , _observer{}
   {}
 };
 
@@ -247,12 +303,20 @@ SNRAPI SNREXPORT void SnrMidiStateFree(MidiState *state) {
 SNRAPI SNREXPORT void SnrMidiStateListen(MidiState *state) {
   libremidi::observer_api_configuration api_config =
     libremidi::midi1::default_api();
-  state->observer = libremidi::observer{
+  state->_observer = libremidi::observer{
     state->get_observer_config(),
     api_config
   };
 }
 
-SNRAPI SNREXPORT void SnrMidiStateOpenPort(MidiState *state,
-                                           const MidiPortInfo &info) {
+SNRAPI SNREXPORT bool SnrMidiStateOpenPort(MidiState *state,
+                                           MidiDirection direction,
+                                           const char *id) {
+  return state->open_port(direction, id);
+}
+
+SNRAPI SNREXPORT void SnrMidiStateClosePort(MidiState *state,
+                                            MidiDirection direction,
+                                            const char *id) {
+  state->close_port(direction, id);
 }

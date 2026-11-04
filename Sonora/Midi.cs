@@ -56,4 +56,12 @@ public class MidiListener : IDisposable {
     public void Listen() {
         SnrMidiStateListen(_midiState);
     }
+
+    public bool OpenPort(MidiPortInfo info) {
+        return SnrMidiStateOpenPort(_midiState, info.Direction, info.Id);
+    }
+
+    public void ClosePort(MidiPortInfo info) {
+        SnrMidiStateClosePort(_midiState, info.Direction, info.Id);
+    }
 }

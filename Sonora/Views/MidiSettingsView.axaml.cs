@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Threading;
 using Avalonia.Controls;
 
 namespace Sonora.Views;
@@ -10,12 +9,30 @@ public partial class MidiSettingsView : UserControl {
     public MidiSettingsView() {
         InitializeComponent();
 
+        _listener = new MidiListener();
+
         var inputs = new ObservableCollection<MidiPortInfo>();
         midiInListBox.ItemsSource = inputs;
+        midiInListBox.SelectionChanged += (s, e) => {
+            foreach (var item in e.RemovedItems) {
+                _listener.ClosePort((MidiPortInfo)item);
+            }
+            foreach (var item in e.AddedItems) {
+                _listener.OpenPort((MidiPortInfo)item);
+            }
+        };
+
         var outputs = new ObservableCollection<MidiPortInfo>();
         midiOutListBox.ItemsSource = outputs;
+        midiOutListBox.SelectionChanged += (s, e) => {
+            foreach (var item in e.RemovedItems) {
+                _listener.ClosePort((MidiPortInfo)item);
+            }
+            foreach (var item in e.AddedItems) {
+                _listener.OpenPort((MidiPortInfo)item);
+            }
+        };
 
-        _listener = new MidiListener();
         _listener.PortAdded += (s, e) => {
             // Don't need to lock because the C++ side has locked a mutex
             // already. This is only ok as long as we only touch inputs/outputs
