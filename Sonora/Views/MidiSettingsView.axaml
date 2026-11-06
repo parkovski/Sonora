@@ -15,7 +15,8 @@
     <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Vertical">
             <TextBlock>MIDI Inputs</TextBlock>
-            <ListBox x:Name="midiInListBox" SelectionMode="Multiple,Toggle">
+            <ListBox x:Name="midiInListBox" SelectionMode="Multiple,Toggle"
+                ItemsSource="{Binding Inputs, Mode=OneWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="snr:MidiPortInfo">
                         <TextBlock Text="{Binding Name}"/>
@@ -25,7 +26,8 @@
         </StackPanel>
         <StackPanel Orientation="Vertical">
             <TextBlock>MIDI Outputs</TextBlock>
-            <ListBox x:Name="midiOutListBox" SelectionMode="Multiple,Toggle">
+            <ListBox x:Name="midiOutListBox" SelectionMode="Multiple,Toggle"
+                ItemsSource="{Binding Outputs, Mode=OneWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="snr:MidiPortInfo">
                         <TextBlock Text="{Binding Name}"/>

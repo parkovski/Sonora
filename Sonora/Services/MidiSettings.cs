@@ -1,12 +1,12 @@
 using System.Runtime.InteropServices;
 
-namespace Sonora;
+namespace Sonora.Services;
 
 public class MidiPortChangedEventArgs : EventArgs {
     public required MidiPortInfo Info { get; set; }
 }
 
-public class MidiListener : IDisposable {
+public class MidiSettings : IDisposable {
     private nint _midiState;
     private GCHandle _handle;
     bool _disposed;
@@ -16,7 +16,7 @@ public class MidiListener : IDisposable {
 
     private static void _PortAdded(nint receiver, [In] MidiPortInfo info) {
         GCHandle handle = GCHandle.FromIntPtr(receiver);
-        MidiListener self = (MidiListener)handle.Target!;
+        MidiSettings self = (MidiSettings)handle.Target!;
         self.PortAdded?.Invoke(self, new MidiPortChangedEventArgs {
             Info = info,
         });
@@ -24,13 +24,13 @@ public class MidiListener : IDisposable {
 
     private static void _PortRemoved(nint receiver, [In] MidiPortInfo info) {
         GCHandle handle = GCHandle.FromIntPtr(receiver);
-        MidiListener self = (MidiListener)handle.Target!;
+        MidiSettings self = (MidiSettings)handle.Target!;
         self.PortRemoved?.Invoke(self, new MidiPortChangedEventArgs {
             Info = info,
         });
     }
 
-    public MidiListener() {
+    public MidiSettings() {
         _handle = GCHandle.Alloc(this);
         nint receiver = GCHandle.ToIntPtr(_handle);
         _midiState = SnrMidiStateNew(receiver, _PortAdded, _PortRemoved);
@@ -51,7 +51,7 @@ public class MidiListener : IDisposable {
         }
     }
 
-    ~MidiListener() => Dispose(false);
+    ~MidiSettings() => Dispose(false);
 
     public void Listen() {
         SnrMidiStateListen(_midiState);

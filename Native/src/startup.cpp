@@ -55,11 +55,11 @@ SNRAPI SNREXPORT void SnrStartup() {
     log::g_errLogger->set_pattern("[%H:%M:%S.%e] [#%t] %l: %v");
   }
 
-  log::info("Sonora.Native initialized.");
+  log::debug("Sonora.Native initialized.");
 }
 
 SNRAPI SNREXPORT void SnrShutdown() {
-  log::info("Sonora.Native shutting down.");
+  log::debug("Sonora.Native shutting down.");
 
   log::g_outLogger = nullptr;
   log::g_errLogger = nullptr;

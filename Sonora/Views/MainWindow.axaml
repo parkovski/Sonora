@@ -45,7 +45,7 @@
                     <ctrl:ThemeIcon Path="avares://Sonora/Assets/piano.png"/>
                 </suki:SukiSideMenuItem.Icon>
                 <suki:SukiSideMenuItem.PageContent>
-                    <views:MidiSettingsView/>
+                    <views:MidiSettingsView DataContext="{Binding MidiSettings}"/>
                 </suki:SukiSideMenuItem.PageContent>
             </suki:SukiSideMenuItem>
         </suki:SukiSideMenu.Items>
